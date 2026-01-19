@@ -1,0 +1,86 @@
+Albers Bot
+Hey! I'm Albers Bot. I can help you navigate the BOU system, find SOPs, or answer questions about our process. What brings you here today?
+10:07 AM
+Can you help me create a customer contact plan?
+10:08 AM
+Albers Bot
+Nice — I can help with that.
+
+A customer contact plan = a simple, trackable schedule of who you’ll contact, why, and when. Here’s a quick, ready-to-use structure (follow Target Phase & Customer Engagement SOPs):
+
+• Objective — one-line: e.g., “Build trust and gather clarifying requirements to raise PWin from 30% → 60%.” (See Target Phase Execution: Customer Engagement Form)
+
+• Key contacts — name, role, phone/email, access level (decision-maker / influencer)
+
+• Messages & asks — 1-line for each contact (intro, technical clar, teaming ask, NDA request)
+
+• Cadence & channels — frequency (weekly/biweekly), method (email → call → meeting), first outreach date
+
+• Owner & backups — Capture Manager owns outreach; list alternate contacts
+
+• Required docs/triggers — NDA (start early — 7–10 days), GovDash entries after every touchpoint, attach notes to Salesforce (see Global Trade Compliance & Gate SOPs)
+
+• Success metrics & next steps — what success looks like (meeting, NDA signed, info gained) and follow-up actions
+
+Next step: tell me the opportunity type (New New Business, Recompete, etc.) and timeline — I’ll draft a 1-page contact plan you can drop into GovDash.
+10:08 AM
+New business and over the next 12mo
+10:09 AM
+Albers Bot
+Great — here’s a simple 1-page customer contact plan tailored for a New Business pursuit over 12 months (follows Target Phase Execution, GovDash, and Opportunity Types SOPs).
+
+Objective
+• Build trust, clarify requirements, and position Albers to move PWin from ~30% → ~60% for New Business.
+
+Key contacts (populate names/roles)
+• Decision-maker — ask for roadmap/requirements
+• Technical lead — clarify specs
+• Contracting officer / buyer — timeline & procurement cues
+• Influencers (PMs, end-users) — use cases
+
+Cadence & channels
+• Month 0–3: outreach weekly (email → call → 1:1 meeting)
+• Month 4–9: monthly check-ins + quarterly executive brief
+• Month 10–12: biweekly as RFP nears or Draft RFP drops
+• Channels: email, phone, onsite/virtual meetings, demos
+
+Core messages & asks
+• Intro + value statement
+• Clarifying questions (use Customer Engagement Form)
+• NDA & teaming interest (initiate — expect 7–10 days)
+• Request for draft requirements / briefings
+
+Owner, backups & docs
+• Owner: Capture Manager (list backup)
+• Log every touchpoint in GovDash and Salesforce (per Target Phase & Gate Workflows)
+• Flag risks in GovDash; escalate compliance issues to Global Eyes
+
+Success metrics
+• NDA signed, meeting with decision-maker, Draft RFP access, PWin uplift milestones
+
+Need me to fill this with real names/dates for your opportunity?
+10:09 AM
+Yes, and can you build it into an Excel file for me?
+10:10 AM
+Albers Bot
+I can do that — I’ll build an Excel-ready contact plan you can paste into Excel/Google Sheets (follows Target Phase Execution, Customer Engagement Form, GovDash, and Gate Workflows SOPs).
+
+What I’ll create (columns):
+• Opportunity, Objective, Contact Name, Role, Email, Phone, Access Level (DM/Influencer), Message/Ask  
+• Cadence, Channel, First Outreach Date, Owner, Backup, Required Docs (NDA/etc.), GovDash Log? (Y/N)  
+• Success Metric, Next Steps, Risk Flag, NDA Status, Notes
+
+How you get it into Excel:
+• I’ll give you a CSV table you can copy/paste into Excel (File → Save As .csv or paste directly into a sheet).
+
+Quick sample row (copy into Excel):
+Opportunity,Objective,Contact Name,Role,Email,Phone,Access Level,Message/Ask,Cadence,Channel,First Outreach Date,Owner,Backup,Required Docs,GovDash Log?,Success Metric,Next Steps,Risk Flag,NDA Status,Notes
+"ACME Radar RFP","Raise PWin 30→60%","Jane Doe","PM","jane@acme.com","555-1234","Decision-maker","Intro + ask for requirements meeting","Weekly (M0–3)","Email→Call","2025-11-10","You","Backup Name","NDA","Y","Meeting + draft reqs","Schedule meeting","No major risks","Not started","Flag for Global Eyes if foreign team"
+
+Send me:
+• Opportunity name, draft RFP date, and contact list (names/emails) — I’ll generate the full CSV for you.
+10:10 AM
+MQ-9, John Doe, j.doe@snc.com
+10:12 AM
+Albers Bot
+10:12 AM

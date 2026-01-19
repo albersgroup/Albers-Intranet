@@ -1,0 +1,113 @@
+DEFENSE VERTICAL – Applicable NAICS Codes
+
+Core Aviation / Aircraft & Systems
+
+336411 – Aircraft Manufacturing (fixed wing, rotary wing, UAS manufacturing) 
+NAICS Association
+
+336413 – Other Aircraft Parts and Auxiliary Equipment Manufacturing (components, sensor housings, mounts) 
+sti-inc.com
+
+334511 – Search, Detection, Navigation, Guidance, Aeronautical & Nautical Instrument Manufacturing (ISR sensors, avionics) 
+star3
+
+336412 – Aircraft Engine and Engine Parts Manufacturing (engine modules, propulsions) 
+NAICS Association
+
+336414 – Guided Missile and Space Vehicle Manufacturing (mission systems, payloads) 
+NAICS Association
+
+Aircraft Services, Test & Maintenance
+
+488190 – Other Support Activities for Air Transportation (aviation maintenance, MRO, flight test services) 
+NAICS Association
+
+Systems Integration & Engineering
+
+541330 – Engineering Services (systems integration, test engineering) 
+Squared Compass
+
+541715 – R&D in Physical, Engineering & Life Sciences (defense R&D, prototype development) 
+Squared Compass
+
+541512 – Computer Systems Design Services (software/sensor integration support) 
+Squared Compass
+
+541519 – Other Computer Related Services (AI/ML, data analysis, autonomous system software) 
+Squared Compass
+
+Additional Relevant Coverage
+
+541614 – Process, Physical Distribution, & Logistics Consulting (mission logistics support)
+
+541690 – Other Scientific & Technical Consulting Services (wargaming, operational analysis)
+
+541990 – All Other Professional, Scientific & Technical Services (misc. technical support)
+
+INDUSTRIALS VERTICAL – Applicable NAICS Codes
+
+Manufacturing & Fabrication
+
+336413 – Other Aircraft Parts and Auxiliary Equipment Manufacturing (aircraft parts/features) 
+sti-inc.com
+
+332510 – Hardware Manufacturing (nuts, bolts, fasteners used in aerospace) 
+General Tool Company
+
+332312 – Fabricated Structural Metal Manufacturing (structural parts & containers)
+
+332710 – Machine Shops (precision machining, tooling)
+
+332999 – All Other Miscellaneous Fabricated Metal Product Manufacturing
+
+Containers & Packaging
+
+332439 – Other Metal Container Manufacturing (weapons containers, engine containers)
+
+311/326 – Packaging Materials Manufacturing (if textile or composite containers apply)
+
+Precision Processes & Finishing
+
+332812 – Metal Coating, Engraving & Allied Services (anodizing, plating)
+
+325510 – Paint & Coating Manufacturing (specialty aerospace coatings)
+
+541380 – Testing Laboratories (material & process testing)
+
+Repair Stations & Support
+
+488190 – Other Support Activities for Air Transportation (FAA 145 work if maintenance services) 
+NAICS Association
+
+ADVANCED PROGRAMS VERTICAL – Applicable NAICS Codes
+
+R&D, Engineering & Emerging Tech
+
+541715 – R&D in Physical, Engineering & Life Sciences (AR/ML/AI, MBSE studies) 
+Squared Compass
+
+541330 – Engineering Services (MBSE, systems engineering) 
+Squared Compass
+
+541511 – Custom Computer Programming Services (software dev/AI apps) 
+Squared Compass
+
+541512 – Computer Systems Design Services (software integration, autonomy) 
+Squared Compass
+
+541513 – Computer Facilities Management Services (infrastructure, cloud support) 
+Summit Strategy
+
+541618 – Other Management Consulting Services (innovation roadmaps, integration consulting) 
+Squared Compass
+
+Defense Tech & Weapon Systems
+
+334511 – Search, Detection, Navigation, Guidance Instrument Manufacturing (radar, sensor tech) 
+star3
+
+334515 – Instrument Manufacturing for Measuring & Testing (test equipment, sensors) 
+Air Force Medical Command
+
+541712 – R&D in Life Sciences (non‑biotech basic R&D) 
+Squared Compass

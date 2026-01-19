@@ -1,0 +1,106 @@
+Feature Request: IDIQ Opportunity Intelligence Portal
+Objective:
+
+Design and implement a new IDIQ Opportunity Intelligence Portal within the existing Albers Aerospace Business Intelligence App. This module will automate the intake, contextual analysis, and scoring of IDIQ opportunities using agentic workflows, leveraging existing logic from the Defense News Intel Feed module.
+
+1. Frontend Layout:
+
+Mirror the layout, UX, and component structure of the Defense News Feed:
+
+Title: IDIQ Opportunity Intel Feed
+
+Filter/Sort Options:
+
+Timeframe (e.g., Last 30/60/90 days)
+
+Scoring Threshold (e.g., 70%+ relevance)
+
+Source Type (Uploaded List, Gov Portal, Email Forward)
+
+Business Unit Tags (align with Albers capabilities)
+
+Summary Tiles:
+
+Total IDIQs Analyzed
+
+Matched Opportunities
+
+Unread
+
+Saved
+
+Score Threshold Over X%
+
+Search Bar: Full-text search of analyzed TOs and summaries
+
+2. Input Sources (Multi-Agent Ingestion):
+
+Configure agents to receive and process inputs from three sources:
+
+Gov Portals Feed Agent:
+
+Direct API/webhook integration with key IDIQ portals (e.g., SAM.gov, NASA SEWP, GSA eBuy).
+
+Scheduled polling or real-time push via RSS or email.
+
+Internal Forwarded Email Agent:
+
+Monitor internal shared inboxes or forwarded match alerts (e.g., from GovWin, SAM alerts).
+
+Extract attachments, body text, and links.
+
+Bulk Task Order List Upload Agent:
+
+Upload and parse CSV/XLS/PDF lists of TOs from primes or contract vehicles.
+
+Allow re-uploading of updated versions with automatic deduplication.
+
+3. Opportunity Scoring Logic (Same as Defense Feed, But Contextualized):
+
+Use existing Vibe logic from Defense News Feed to score IDIQs:
+
+Match Score Calculation (75% Match or above):
+
+Relevance of scope language to Albers’ actual past performance and capabilities (not keywords or NAICS).
+
+Match to specific capabilities like SATCOM integration, aviation maintenance, sensor payloads, tactical ISR, software dev, etc.
+
+Cross-reference with master past performance library (PDF/Word ingest).
+
+Agentic Evaluation Tags:
+
+Past Performance Match Level (Direct / Indirect / None)
+
+Contract Type Familiarity
+
+Vehicle or Prime Relevance
+
+Output for each opportunity:
+
+One-line relevancy summary
+
+Opportunity title and source
+
+Upload date and score
+
+Optional “Why relevant” section auto-populated for user clarity
+
+4. Additional Features:
+
+Save for Action: Users can flag relevant TOs for pursuit.
+
+Custom Alerts: Users can set filters and get notified for matches over a certain score.
+
+Analytics Dashboard (Phase 2): Number of TOs processed, hit rate, most aligned capabilities, etc.
+
+Development Notes for Replit:
+
+Use reusable components from existing Defense News Feed for layout, scoring UX, and filters.
+
+Leverage embedding models for semantic scoring of scope language.
+
+Ensure agents are modular and can be updated independently.
+
+Score threshold logic should match the confidence bands used in the Defense Feed (e.g., 75% Match = high relevance).
+
+Store parsed results in a unified opportunity database that supports historical tracking.

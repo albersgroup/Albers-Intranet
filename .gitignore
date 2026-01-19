@@ -1,0 +1,8 @@
+node_modules
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gzattached_assets/Albers_Video_1765494531912.mp4
+*.tar.gz
+albers-aerospace-intranet.tar.gz

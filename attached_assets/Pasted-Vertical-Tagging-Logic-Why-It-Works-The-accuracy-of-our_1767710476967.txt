@@ -1,0 +1,143 @@
+Vertical Tagging Logic: Why It Works
+The accuracy of our tagging comes from three key design decisions: rich capability profiles, explicit AI instructions, and low temperature settings. Here's exactly how it works.
+
+The Core Principle: Comparative Profile Matching
+The AI doesn't just tag based on keywords—it compares the article content against complete profiles of each business unit, then determines which profile has the strongest alignment. This is fundamentally different from simple keyword matching.
+
+Each business unit profile contains four elements:
+
+Companies: The actual subsidiary/division names
+Summary: A narrative description of what the unit does
+Keywords: Technical terms and concepts associated with that unit
+Focus Areas: Types of contracts or work the unit pursues
+The AI receives all three profiles simultaneously and must choose which one the content most closely resembles.
+
+The Three Capability Profiles
+Here's exactly what we feed the AI:
+
+DEFENSE VERTICAL
+Companies: TAS (Tactical Aircraft Solutions), IOMAX, Unmanned Systems Inc (USI)
+
+Keywords: tactical aircraft, ISR, intelligence surveillance reconnaissance, UAS, unmanned aerial systems, drone, aviation maintenance, MRO, flight test, sensor integration, weapons systems, border security, counterterrorism, military aviation, DOD, NAVAIR, Air Force, Army, Navy, Marine Corps, fixed wing, rotary wing, helicopter, aircraft modification, ground sensors, surveillance, classified, security clearance
+
+Focus Areas: Military aviation contracts, ISR aircraft awards, UAS procurements, Sensor technology contracts, Border security programs, DOD maintenance contracts, Flight test services, Tactical aircraft modifications, Counter-UAS systems
+
+Summary: Delivers warfighter-relevant products and services in multi-security environments. Capabilities include tactical aircraft solutions, manned and unmanned aviation operations, ISR platforms, ground sensors and surveillance systems, contract logistics support, aircraft maintenance and modifications, and classified infrastructure services.
+
+INDUSTRIALS VERTICAL
+Companies: GCS (Garrett Container Systems), ICC (Impact Case and Container), API (Advanced Packaging Inc), Heritage Aviation, Albers Metal Finishing (AMF)
+
+Keywords: manufacturing, precision machining, CNC, sheet metal, fabrication, containers, shipping containers, aluminum containers, JMIC, aerospace parts, aircraft components, AS9100, NADCAP, FAA 145, repair station, metal finishing, anodizing, chemical processing, wiring harness, cable assembly, weapons containers, engine containers
+
+Focus Areas: Aerospace manufacturing contracts, Container procurement awards, Weapons storage solutions, Engine container contracts, FAA repair station work, Metal finishing contracts, DOD manufacturing awards, Supply chain opportunities
+
+Summary: Provides full-spectrum aerospace manufacturing with AS9100D and NADCAP certifications. Includes precision machining, sheet metal fabrication, container solutions for defense applications, chemical processing and metal finishing, and FAA Part 145 repair station services.
+
+ADVANCED PROGRAMS VERTICAL
+Companies: DRA (Defense Research Associates), Onepath, Onepath Systems
+
+Keywords: MBSE, model based systems engineering, digital engineering, AI, artificial intelligence, machine learning, ML, autonomy, R&D, research, SBIR, STTR, innovation, emerging technology, armaments, weapons integration, radar, sensors, electronic warfare, cyber, IT infrastructure, classified networks, DO-178, software certification, AFRL, DARPA
+
+Focus Areas: SBIR/STTR awards, MBSE contracts, AI/ML defense programs, Digital engineering initiatives, AFRL research contracts, DARPA programs, Emerging technology R&D, Armaments integration contracts, Classified IT infrastructure, Electronic warfare programs
+
+Summary: The warfighter's trusted partner for emerging defense and aerospace technologies delivered at the speed of need. Includes MBSE and digital engineering, AI/ML applications, armaments integration, R&D partnerships, classified IT infrastructure, and defense research.
+
+The AI Prompt Structure
+The prompt explicitly asks the AI to:
+
+"Analyze the following article and determine: Which business vertical it's most relevant to (defense, industrials, or advanced_programs)"
+
+Then provides all three profiles side by side:
+
+DEFENSE (Companies: TAS, IOMAX, USI):
+- Summary: [narrative]
+- Keywords: [list]
+- Focus Areas: [list]
+INDUSTRIALS (Companies: GCS, ICC, AMF):
+- Summary: [narrative]
+- Keywords: [list]
+- Focus Areas: [list]
+ADVANCED PROGRAMS (Companies: DRA, Onepath):
+- Summary: [narrative]
+- Keywords: [list]
+- Focus Areas: [list]
+By presenting all three options simultaneously with equal detail, the AI performs a comparative analysis rather than a threshold check.
+
+Why This Works Better Than Keyword Matching
+Simple keyword matching fails because:
+
+"Aircraft maintenance" could be Defense (operational MRO) or Industrials (manufacturing facility)
+"Sensors" could be Defense (ISR platforms) or Advanced Programs (R&D)
+"UAS" could be Defense (operational drones) or Advanced Programs (autonomous systems research)
+The AI resolves ambiguity by looking at context:
+
+Article Content	Tagged As	Why
+"Army awards $50M contract for MQ-9 sustainment"	Defense	Sustainment = operational support, MQ-9 = fielded platform
+"AFRL seeks proposals for autonomous swarm AI"	Advanced Programs	AFRL + proposals + AI + emerging tech = R&D
+"Boeing orders precision machined components"	Industrials	Manufacturing + supply chain focus
+"DARPA tests new EW pod on F-16"	Advanced Programs	DARPA + testing + emerging tech
+"F-16 depot maintenance contract awarded"	Defense	Depot maintenance = operational support
+"New shipping container certified for weapons transport"	Industrials	Container + certification = manufacturing
+The Temperature Setting
+We use temperature: 0.3 which makes the AI more deterministic and consistent. Higher temperatures introduce creativity and variability—useful for writing, but bad for classification tasks.
+
+Low temperature means:
+
+Similar articles get tagged the same way every time
+Less "creative interpretation"
+More predictable, auditable results
+How to Apply This to Task Order Tagging
+For your task order matching system, structure your capability profiles the same way:
+
+CAPABILITY AREA 1: [Name]
+- Past Performance Contracts: [List actual contract names/numbers]
+- Technical Keywords: [Specific terms from your PWS/SOW history]
+- NAICS Codes: [Primary codes for this capability]
+- Agencies: [Customers you've served]
+- Summary: [What you actually do in this area]
+CAPABILITY AREA 2: [Name]
+- Past Performance Contracts: [...]
+- Technical Keywords: [...]
+...
+Key principles to replicate:
+
+Make profiles mutually exclusive where possible. The clearer the boundaries between categories, the more accurate the tagging.
+
+Use actual contract names and technical terms from your past performance, not generic descriptions. "NAVAIR N00019-18-C-0001 F/A-18 depot maintenance" is better than "aircraft maintenance."
+
+Include agency names in each profile. If you've done Army logistics and Navy logistics, those might be different capability areas.
+
+Present all options simultaneously. The AI should choose the best fit, not decide if something meets a threshold.
+
+Keep temperature low (0.2-0.4). Classification tasks need consistency, not creativity.
+
+Require a single choice. Force the AI to pick ONE vertical, not multiple. Ambiguous content gets assigned to the strongest match.
+
+Example Prompt for Task Orders
+You are a capture analyst evaluating task orders for [Company Name].
+Determine which capability area this task order BEST matches:
+CAPABILITY AREA: IT Services
+- Past Performance: DISA ENCORE III, Army ITES-3S Task Order 42
+- Keywords: help desk, network administration, cybersecurity, STIG compliance, 
+  cloud migration, O365, Active Directory, NIST 800-53
+- NAICS: 541512, 541519
+- Agencies: DISA, Army, DHS
+CAPABILITY AREA: Training & Simulation  
+- Past Performance: NAVAIR Aircrew Training, PEO STRI JTRS Trainer
+- Keywords: instructor-led training, LVC, flight simulator, courseware 
+  development, SCORM, ISD, training device maintenance
+- NAICS: 611430, 541611
+- Agencies: NAVAIR, PEO STRI, Air Force
+CAPABILITY AREA: Logistics Support
+- Past Performance: DLA Distribution SPE7L1-19-D-0003, TACOM ILSC
+- Keywords: supply chain, warehouse operations, materiel management, 
+  transportation, property accountability, GCSS-Army, LMP
+- NAICS: 493110, 541614
+- Agencies: DLA, TACOM, Army
+Choose the SINGLE best match. Respond with JSON:
+{
+  "capability_area": "one of the above",
+  "confidence": 0-100,
+  "reason": "why this matches best"
+}
+The accuracy comes from specificity in the profiles and forcing a comparative choice. Generic descriptions produce generic (often wrong) results. Real contract names, real keywords from your actual work, and real agency relationships produce accurate tagging.

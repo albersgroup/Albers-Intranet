@@ -1,0 +1,103 @@
+SSO Integration with Business Intelligence App
+I need you to implement Single Sign-On (SSO) integration so authenticated users can seamlessly access our Business Intelligence (BI) Report Generator app without logging in again.
+
+Required Configuration
+1. Environment Variables
+Add these to Replit Secrets:
+
+JWT_SECRET=602122
+BI_APP_URL=https://business-operations-unit-portal.replit.app/api/easy-bi-reports
+Important: Replace the BI_APP_URL with the actual published URL of the BI app (the app you need to redirect users to).
+
+2. Install JWT Package
+npm install jsonwebtoken @types/jsonwebtoken
+3. Create SSO Token Generator Function
+Add this helper function to your backend:
+
+import jwt from "jsonwebtoken";
+export function generateSSOToken(userEmail: string, userName?: string): string {
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) {
+    throw new Error("JWT_SECRET not configured");
+  }
+  // Create JWT token with user info
+  const token = jwt.sign(
+    {
+      email: userEmail,
+      name: userName || userEmail,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + (5 * 60), // Expires in 5 minutes
+    },
+    jwtSecret
+  );
+  return token;
+}
+4. Create SSO Redirect Endpoint
+Add this route to your backend:
+
+// SSO redirect to BI app
+app.get('/api/sso/bi-reports', isAuthenticated, (req, res) => {
+  try {
+    // Get current user's email from session
+    const userEmail = req.user?.email || req.session?.email; // Adjust based on your session structure
+    const userName = req.user?.name || req.session?.name; // Optional
+    
+    if (!userEmail) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    // Generate SSO token
+    const token = generateSSOToken(userEmail, userName);
+    
+    // Get BI app URL from environment
+    const biAppUrl = process.env.BI_APP_URL;
+    if (!biAppUrl) {
+      console.error('BI_APP_URL not configured');
+      return res.status(500).json({ message: "SSO not configured" });
+    }
+    
+    // Redirect to BI app with token
+    res.redirect(`${biAppUrl}/auth/sso?token=${token}`);
+    
+  } catch (error) {
+    console.error('SSO redirect error:', error);
+    res.status(500).json({ message: "SSO redirect failed" });
+  }
+});
+5. Update Navigation Link
+Update your "BI Reports" or "Business Intelligence" navigation link to point to the SSO endpoint:
+
+If you have a sidebar/menu navigation:
+
+{
+  title: "Business Intelligence",
+  icon: FileBarChart, // or your preferred icon
+  url: "/api/sso/bi-reports",
+}
+Or if using direct links:
+
+<a 
+  href="/api/sso/bi-reports"
+  data-testid="link-bi-reports"
+>
+  Business Intelligence
+</a>
+How It Works
+User logs into this portal app
+User clicks "Business Intelligence" link
+Portal backend (/api/sso/bi-reports) generates a JWT token with user's email
+Portal redirects to: https://[BI_APP_URL]/auth/sso?token=JWT_TOKEN
+BI app validates the token using the shared JWT_SECRET
+BI app auto-creates user account if needed and logs them in
+User sees the BI dashboard
+Testing
+After implementation:
+
+Log into this portal
+Click the "Business Intelligence" link
+You should be automatically redirected and logged into the BI app
+If you see an error, check that JWT_SECRET is exactly 602122 in both apps
+Security Notes
+JWT tokens expire after 5 minutes (only used for SSO handoff)
+Both apps must have the same JWT_SECRET value
+Tokens are cryptographically signed and cannot be forged
+The BI app validates all tokens before creating sessions

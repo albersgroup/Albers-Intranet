@@ -1,0 +1,97 @@
+# URGENT: Portal SSO Fix Required
+
+## The Problem
+The portal's "BI Reports" link is NOT working. The logs show it's just navigating to the BI app's homepage instead of using SSO authentication.
+
+## What You Need to Fix
+
+### Current (Broken) Behavior
+The `/api/easy-bi-reports` endpoint is probably doing this:
+```typescript
+// WRONG - This just navigates, no authentication
+app.get('/api/easy-bi-reports', (req, res) => {
+  res.redirect('https://business-operations-unit-portal.replit.app/api/easy-bi-reports');
+});
+```
+
+### Required Fix
+Replace it with this EXACT code:
+
+```typescript
+import jwt from "jsonwebtoken";
+
+app.get('/api/easy-bi-reports', (req, res) => {
+  // 1. Check if user is logged in
+  const userEmail = req.user?.email || req.session?.userEmail || req.session?.user?.email;
+  
+  if (!userEmail) {
+    return res.status(401).send('You must be logged in to access BI Reports');
+  }
+  
+  // 2. Generate JWT token
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) {
+    console.error('JWT_SECRET not configured!');
+    return res.status(500).send('SSO not configured');
+  }
+  
+  const token = jwt.sign(
+    {
+      email: userEmail,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 300, // 5 minutes
+    },
+    jwtSecret
+  );
+  
+  // 3. Get BI app URL
+  const biAppUrl = process.env.BI_APP_URL;
+  if (!biAppUrl) {
+    console.error('BI_APP_URL not configured!');
+    return res.status(500).send('BI app URL not configured');
+  }
+  
+  // 4. Redirect to BI app SSO endpoint with token
+  console.log('SSO Redirect: Sending user to BI app with token');
+  res.redirect(`${biAppUrl}/auth/sso?token=${token}`);
+});
+```
+
+## Required Environment Variables in Portal
+
+Add these to Replit Secrets:
+```
+JWT_SECRET=602122
+BI_APP_URL=https://[ACTUAL_BI_APP_URL]/
+```
+
+**CRITICAL:** The `BI_APP_URL` should be the ACTUAL published URL of the BI app (the URL shown in the screenshots), NOT the portal's own URL.
+
+## Required Package
+
+Install jsonwebtoken:
+```bash
+npm install jsonwebtoken
+```
+
+## How to Verify It's Working
+
+After the fix, when you click "BI Reports":
+1. Portal logs should show: `SSO Redirect: Sending user to BI app with token`
+2. Browser URL should briefly show: `https://[BI_APP]/auth/sso?token=eyJ...`
+3. Then redirect to BI app dashboard
+4. BI app logs should show: `=== SSO ENDPOINT HIT ===`
+
+## Debug Checklist
+
+If it still doesn't work after this fix:
+- [ ] Is `jsonwebtoken` installed? Run `npm install jsonwebtoken`
+- [ ] Is `JWT_SECRET=602122` set in portal's Replit Secrets?
+- [ ] Is `BI_APP_URL` set to the correct BI app URL (not the portal URL)?
+- [ ] Did you restart the portal app after adding environment variables?
+- [ ] Check portal logs for any error messages
+- [ ] Check BI app logs - do you see `=== SSO ENDPOINT HIT ===`?
+
+---
+
+**Bottom line:** The `/api/easy-bi-reports` endpoint must generate a JWT and redirect to `${BI_APP_URL}/auth/sso?token=${token}`. That's it. Nothing more complex is needed.

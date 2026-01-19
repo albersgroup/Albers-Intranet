@@ -1,0 +1,157 @@
+## Context
+I want to integrate my Business Intelligence (BI) Report Generator app with this master portal using Single Sign-On (SSO). Users should log in once at the portal and then seamlessly access the BI app without logging in again.
+
+## Requirements
+
+### 1. Add JWT Secret to Environment
+First, add the JWT_SECRET to your Replit Secrets (same one used in the BI app):
+```
+JWT_SECRET=<the same secret you added to the BI app>
+```
+
+### 2. Install jsonwebtoken Package
+Install the jsonwebtoken library:
+```bash
+npm install jsonwebtoken @types/jsonwebtoken
+```
+
+### 3. Add Navigation Link to BI Tool
+Add a navigation item called "Business Intelligence" or "BI Reports" to your portal's main navigation menu.
+
+### 4. Implement SSO Token Generation
+
+After a user successfully logs in to the portal, you'll need to generate a JWT token and redirect them to the BI app.
+
+**Add this helper function to your backend:**
+
+```typescript
+import jwt from "jsonwebtoken";
+
+export function generateSSOToken(userEmail: string): string {
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) {
+    throw new Error("JWT_SECRET not configured");
+  }
+
+  // Create JWT token with user info
+  const token = jwt.sign(
+    {
+      email: userEmail,
+      iat: Math.floor(Date.now() / 1000), // Issued at
+      exp: Math.floor(Date.now() / 1000) + (5 * 60), // Expires in 5 minutes
+    },
+    jwtSecret
+  );
+
+  return token;
+}
+```
+
+### 5. Create SSO Redirect Route
+
+**Add this endpoint to your backend routes:**
+
+```typescript
+// SSO redirect to BI app
+app.get('/api/sso/bi-reports', isAuthenticated, (req, res) => {
+  try {
+    // Get current user's email from session
+    const userEmail = req.session.userEmail; // Adjust based on your session structure
+    
+    if (!userEmail) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    // Generate SSO token
+    const token = generateSSOToken(userEmail);
+    
+    // Redirect to BI app with token
+    const biAppUrl = process.env.BI_APP_URL || "https://your-bi-app.replit.app";
+    res.redirect(`${biAppUrl}/auth/sso?token=${token}`);
+    
+  } catch (error) {
+    console.error('SSO redirect error:', error);
+    res.status(500).json({ message: "SSO redirect failed" });
+  }
+});
+```
+
+### 6. Update Navigation Link
+
+**In your frontend navigation component:**
+
+```typescript
+// Example navigation item
+{
+  title: "Business Intelligence",
+  icon: FileBarChart, // or any icon from lucide-react
+  url: "/sso/bi-reports", // This will trigger the backend SSO redirect
+}
+```
+
+**Or use a direct link with onclick handler:**
+
+```tsx
+<a 
+  href="#"
+  onClick={async (e) => {
+    e.preventDefault();
+    // This triggers the SSO flow
+    window.location.href = "/api/sso/bi-reports";
+  }}
+>
+  Business Intelligence
+</a>
+```
+
+### 7. Add Environment Variable for BI App URL
+
+Add this to your Replit Secrets (or .env):
+```
+BI_APP_URL=https://your-bi-app-name.replit.app
+```
+
+Replace `your-bi-app-name` with the actual published URL of the BI app.
+
+## How It Works
+
+1. User logs into your master portal (with email/password or however you authenticate)
+2. User clicks "Business Intelligence" link in navigation
+3. Portal backend generates a signed JWT token containing the user's email
+4. Portal redirects user to: `https://bi-app.replit.app/auth/sso?token=JWT_TOKEN_HERE`
+5. BI app validates the JWT signature using the shared JWT_SECRET
+6. If valid, BI app creates a session for the user and redirects to `/dashboard`
+7. User is now logged into the BI app seamlessly
+
+## Security Notes
+
+- ✅ JWT tokens expire after 5 minutes (only used for the SSO handoff)
+- ✅ JWT tokens are signed with a secret, so they can't be forged
+- ✅ Both apps validate the token signature using the shared JWT_SECRET
+- ✅ Users are auto-created in the BI app if they don't exist yet
+- ✅ The BI app still maintains its own sessions after SSO login
+
+## Testing
+
+1. Make sure both apps have the same JWT_SECRET
+2. Make sure both apps are published (or at least accessible)
+3. Log into your portal
+4. Click the "Business Intelligence" navigation link
+5. You should be automatically logged into the BI app and see the dashboard
+
+## Optional: Domain Restriction
+
+If you want to restrict which domains can use SSO, add domain validation in the BI app's SSO endpoint. Contact me if you need help with this.
+
+---
+
+## Summary
+
+**What you need to do:**
+1. Add JWT_SECRET to your portal's Replit Secrets (same value as BI app)
+2. Install jsonwebtoken package
+3. Add the helper function to generate tokens
+4. Add the SSO redirect endpoint
+5. Add navigation link that points to `/api/sso/bi-reports`
+6. Add BI_APP_URL environment variable with the BI app's published URL
+7. Test the flow

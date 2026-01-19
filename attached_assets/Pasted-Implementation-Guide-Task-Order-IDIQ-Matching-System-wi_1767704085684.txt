@@ -1,0 +1,237 @@
+Implementation Guide: Task Order/IDIQ Matching System with AI Scoring
+Based on the Albers Defense Intelligence Feed Architecture
+
+System Overview
+You are building a tool that scrapes emails and documents to identify task orders from IDIQ contracts, then scores them against the company's past performance and capabilities. The system should display matched opportunities similarly to a curated news feed, with AI-powered relevance scoring, user feedback learning, and interactive features.
+
+Core Architecture Components
+1. Data Ingestion Layer
+Instead of RSS feeds, your system ingests from:
+
+Email sources: Inbox monitoring for task order notifications, RFI/RFP distributions, contract announcements
+Document uploads: PDF, DOCX, and TXT files containing task order descriptions, SOWs, PWS documents
+For each ingested item, extract:
+
+Title/Subject: The task order name or email subject
+Content/Body: Full text for analysis (use pdf-parse for PDFs, mammoth for DOCX)
+Source identifier: Email sender, attachment filename, or upload source
+Timestamp: When received or uploaded
+Unique ID: URL, message ID, or file hash to prevent duplicates
+2. Capability Context System
+Before scoring any opportunities, load the company's capability profile into memory. This context tells the AI what to look for. Structure it as:
+
+COMPANY CAPABILITIES:
+- Past Performance: [List of relevant contract names, agencies, NAICS codes]
+- Core Competencies: [Technical capabilities, certifications, clearances]
+- Key Personnel: [Relevant expertise areas]
+- Contract Vehicles: [Active IDIQs, GSA schedules, BPAs the company holds]
+- Target Agencies: [Agencies with existing relationships]
+- NAICS Codes: [Primary and secondary codes]
+- Set-Aside Status: [Small business, 8(a), SDVOSB, etc.]
+Store this in a database table so it can be updated without code changes.
+
+3. AI Scoring Engine
+For each new task order, send it to an AI model (GPT-4o-mini recommended for cost/performance balance) with this prompt structure:
+
+SYSTEM PROMPT:
+You are a capture management analyst evaluating task order opportunities for [Company Name]. 
+Analyze the following task order and determine:
+1. RELEVANCE SCORE (0-100): How well does this match our capabilities and past performance?
+2. MATCH CATEGORY: Which capability area is this most relevant to?
+3. SCORE REASON: Brief explanation of why this score was assigned
+4. OPPORTUNITY SUMMARY: 1-2 sentence executive summary
+5. KEY REQUIREMENTS: List of critical requirements extracted from the task order
+6. DISCRIMINATORS: What would make us competitive or not competitive?
+7. TAGS: Relevant keywords for filtering
+COMPANY CONTEXT:
+[Insert capability profile here]
+PAST PERFORMANCE ALIGNMENT:
+[Insert relevant past performance summaries]
+USER FEEDBACK PREFERENCES:
+[Insert learned preferences - see Section 4]
+TASK ORDER TO ANALYZE:
+Title: [title]
+Content: [first 3000-5000 characters of content]
+Source: [where this came from]
+Respond in JSON format:
+{
+  "score": 0-100,
+  "category": "string",
+  "reason": "string", 
+  "summary": "string",
+  "requirements": ["array", "of", "strings"],
+  "discriminators": {"strengths": [], "weaknesses": []},
+  "tags": ["array", "of", "keywords"]
+}
+Scoring Guidelines to Include in Prompt:
+
+Score Range	Meaning
+85-100	Excellent fit - strong past performance, held contract vehicle, known customer
+70-84	Good fit - relevant capabilities, some past performance, achievable
+60-69	Potential fit - partial alignment, would require teaming or stretch
+40-59	Weak fit - limited alignment, significant gaps
+0-39	Poor fit - outside core competencies, do not pursue
+4. Continuous Learning from User Feedback
+This is the most important differentiator. The system learns what users actually find valuable.
+
+Database Schema for Feedback:
+
+feedback_preferences:
+  - id (primary key)
+  - preference_type: 'positive' or 'negative'
+  - reason: text (user-provided reason)
+  - weight: integer (how many times this reason has been given)
+  - created_at, updated_at
+When a user upvotes an opportunity:
+
+Prompt them: "What made this opportunity relevant?" (free text or predefined options)
+Store their reason in feedback_preferences with type='positive'
+If the exact reason already exists, increment the weight
+When a user downvotes an opportunity:
+
+Prompt them: "Why isn't this a good fit?" (free text or predefined options)
+Store their reason with type='negative'
+If the exact reason already exists, increment the weight
+Before each scoring run, load feedback and inject into the AI prompt:
+
+USER FEEDBACK PREFERENCES:
+POSITIVE SIGNALS (opportunities like these should score HIGHER):
+- "Strong past performance with Army TACOM" (mentioned 8 times)
+- "Matches our cleared personnel capabilities" (mentioned 5 times)
+- "Within our existing contract vehicle" (mentioned 4 times)
+NEGATIVE SIGNALS (opportunities like these should score LOWER):
+- "Requires shipyard experience we don't have" (mentioned 6 times)  
+- "Too small for our overhead structure" (mentioned 3 times)
+- "OCONUS work not in our strategy" (mentioned 2 times)
+This creates a feedback loop where the AI learns your company's actual pursuit criteria, not just what the capability profile says.
+
+5. Score Filtering Threshold
+Only display opportunities that meet a minimum relevance score. Recommended: 60%
+
+if (score < 60) {
+  // Do not save to display table, or mark as "filtered out"
+  // Still log it for analytics purposes
+}
+Allow administrators to adjust this threshold. Some users may want to see more opportunities (lower threshold) or fewer (higher threshold).
+
+6. User Interaction Features
+Required Features:
+
+Feature	Description	Database Field
+Read/Unread	Track which opportunities each user has viewed	user_article_reads junction table
+Save/Bookmark	Let users save opportunities for later review	is_saved boolean or separate table
+Upvote/Downvote	Collect feedback that feeds into learning	user_feedback table
+Notes	Let users add private notes to opportunities	user_notes table
+Status Tracking	Pursue/No-Go/Watching/Won/Lost	opportunity_status field
+Read Tracking Implementation:
+
+When user opens an opportunity detail view, record the timestamp
+Show visual indicator (bold title, dot badge) for unread items
+Allow "Mark all as read" functionality
+Save/Bookmark Implementation:
+
+Heart or star icon that toggles saved state
+Separate "Saved" view that shows only bookmarked opportunities
+Saved items should persist even if they age out of the main feed
+7. Filtering and Search
+Required Filters:
+
+By category/capability area
+By score range (e.g., 80+, 60-79, all)
+By date range (last 7 days, 30 days, 90 days)
+By source (email vs. uploaded document)
+By status (new, pursuing, no-go, etc.)
+Saved items only
+Unread only
+Search Functionality:
+
+Full-text search across title, summary, and extracted content
+Search should include archived/older opportunities
+Track search queries for analytics
+8. Display Components
+Opportunity Card Should Show:
+
+Title (linked to detail view)
+AI-generated summary (2-3 sentences max)
+Relevance score (with visual indicator - color coded)
+Category badge
+Source indicator
+Published/received date
+Tags (clickable for filtering)
+Read/unread indicator
+Save button
+Quick upvote/downvote buttons
+Detail View Should Show:
+
+Full AI analysis (summary, requirements, discriminators)
+Original source content (expandable)
+Score breakdown with AI reasoning
+User notes section
+Status selector
+Related opportunities (same category or tags)
+Action buttons (upvote, downvote, save, share)
+9. Rate Limiting and Performance
+API Call Management:
+
+Add 1-2 second delay between AI scoring calls
+Process maximum 10-20 items per batch
+Implement exponential backoff if rate limited
+Track API usage for cost monitoring
+Duplicate Prevention:
+
+Generate hash of title + source + date for each opportunity
+Check hash against database before processing
+Use database unique constraint as backup
+Scheduling:
+
+Run email ingestion every 1-4 hours (configurable)
+Allow manual "refresh now" trigger
+Track last run time and display to users
+10. Analytics Dashboard
+Track and display:
+
+Total opportunities processed (daily, weekly, monthly)
+Average relevance score over time
+Opportunities by category breakdown
+User engagement (views, saves, feedback given)
+Score distribution histogram
+Top search queries
+Feedback sentiment trends
+Database Schema Summary
+opportunities:
+  - id, title, source_type, source_identifier
+  - content_excerpt, full_content_path (if storing separately)
+  - ai_score, ai_category, ai_summary, ai_reason
+  - requirements (JSON array), discriminators (JSON)
+  - tags (array), received_at, created_at
+  - status, is_archived
+capability_profiles:
+  - id, category_name, companies, keywords
+  - past_performance_summary, focus_areas
+  - naics_codes, contract_vehicles
+feedback_preferences:
+  - id, preference_type, reason, weight
+  - created_at, updated_at
+user_feedback:
+  - id, user_id, opportunity_id
+  - feedback_type (upvote/downvote)
+  - reason, created_at
+user_opportunity_reads:
+  - user_id, opportunity_id, read_at
+user_saved_opportunities:
+  - user_id, opportunity_id, saved_at
+user_notes:
+  - id, user_id, opportunity_id, note_text
+  - created_at, updated_at
+Key Implementation Principles
+Score first, filter second - Process everything through AI, then filter by threshold. This gives you analytics on what you're filtering out.
+
+Learn from every interaction - Every upvote and downvote is training data. Store reasons, not just votes.
+
+Context is everything - The more detailed your capability profile, the better the AI scoring. Include specific contract names, agency relationships, and technical keywords.
+
+Respect the threshold - The 60% minimum exists to prevent noise. Trust the AI scoring backed by user feedback.
+
+Make feedback easy - If giving feedback requires more than 2 clicks, users won't do it. Offer predefined reasons with an "other" option.
+
+Show the reasoning - Users should always see WHY something scored the way it did. Transparency builds trust in the system.
