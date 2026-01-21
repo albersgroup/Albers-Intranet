@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-The Albers Aerospace Intranet is a full-stack TypeScript enterprise application serving as the company-wide platform for tools, announcements, and resources across all departments. It features specialized modules for Business Development, AI-powered assistance (Albers Bot), and division-specific portals.
+The Albers Aerospace Intranet is a full-stack TypeScript enterprise application serving as the company-wide platform for tools, announcements, and resources across all departments. It features specialized modules for Business Development and division-specific portals.
+
+**Deployment**: This application is configured for internal deployment on Dokku with local PostgreSQL database, local file storage, and Outlook Gov SMTP email. OpenAI-powered features (Albers Bot, AI scoring) are disabled in this deployment.
 
 ## Development Commands
 
@@ -19,11 +21,14 @@ The Albers Aerospace Intranet is a full-stack TypeScript enterprise application 
 
 ### Environment Setup
 Requires `.env` file with:
-- `DATABASE_URL` - PostgreSQL connection string (Neon serverless)
+- `DATABASE_URL` - PostgreSQL connection string (auto-provided by Dokku)
 - `SESSION_SECRET` - Session encryption key
-- `AI_INTEGRATIONS_OPENAI_BASE_URL` and `AI_INTEGRATIONS_OPENAI_API_KEY` - OpenAI API via Replit AI
-- `GOOGLE_CLOUD_BUCKET_NAME`, `GOOGLE_CLOUD_PROJECT_ID`, `GOOGLE_CLOUD_SERVICE_ACCOUNT_KEY` - GCS for file storage
-- `RESEND_API_KEY` - Email service credentials
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` - Outlook Gov SMTP credentials
+- `STORAGE_DIR` - Local file storage directory (default: /app/storage)
+- `BASE_URL` - Application base URL for emails and links
+- `NODE_ENV` - Node environment (production recommended)
+
+See `.env.example` for full configuration details.
 
 ## Architecture
 
@@ -39,14 +44,14 @@ Requires `.env` file with:
 
 ### Backend (server/)
 - **Runtime**: Node.js with Express.js, ES modules, TypeScript via tsx
-- **Database**: PostgreSQL (Neon serverless) with Drizzle ORM for schema definitions
+- **Database**: PostgreSQL with Drizzle ORM for schema definitions
   - Session storage uses `connect-pg-simple` (stores sessions in database)
   - Authentication queries use raw SQL via `node-postgres` Pool
   - Other queries primarily use raw SQL with occasional Drizzle for type safety
-- **Authentication**: Email/password with email verification, password reset, domain restriction (@albers.aero, @albersaerospace.com), express-session with PostgreSQL backing, JWT-based SSO
-- **File Uploads**: Multer (memory storage) → Google Cloud Storage via ObjectStorageService
-- **AI Integration**: OpenAI API (GPT-5-mini) via Replit AI proxy for Albers Bot
-- **Email**: Resend for transactional emails (verification, password reset, notifications)
+- **Authentication**: Email/password with email verification, password reset, domain restriction (@albers.aero, @albersaerospace.com), express-session with PostgreSQL backing
+- **File Uploads**: Multer (memory storage) → Local file system via LocalFileStorageService
+- **Email**: Nodemailer with Outlook Gov SMTP for transactional emails (verification, password reset, notifications)
+- **Disabled Features**: OpenAI AI features, ClickUp integration, SSO/JWT, Email ingestion (see Feature Flags section)
 
 ### Shared Code (shared/)
 - `schema.ts` - Drizzle schema definitions, Zod validation schemas, TypeScript types
@@ -57,13 +62,29 @@ Requires `.env` file with:
 - `@shared/*` → `shared/*`
 - `@assets/*` → `attached_assets/*`
 
+### Feature Flags
+The application uses feature flags to disable certain features for internal deployment:
+
+**client/src/config/features.ts**:
+- `ALBERS_BOT`: false - AI chat assistant disabled (no OpenAI API)
+- `IDIQ_AI_SCORING`: false - AI opportunity scoring disabled
+- `TRIP_REPORT_AI_SUMMARY`: false - AI trip report summarization disabled
+- `CLICKUP_INTEGRATION`: false - ClickUp proposal dashboard disabled
+- `SSO_BI_TOOL`: false - SSO to Business Intelligence Tool disabled
+- `EMAIL_INGESTION`: false - Automated email processing disabled
+
+**server/routes.ts**:
+- `OPENAI_ENABLED`: false - Global flag for all OpenAI features
+
+When adding new AI or third-party service features, always check these flags and provide graceful fallbacks.
+
 ## Key Features & Modules
 
 ### Core Infrastructure
 - **Universal Search**: Command palette (CommandPalette.tsx) for quick navigation
-- **Albers Bot**: AI assistant with auto-updating knowledge base (generates twice daily at 6 AM/6 PM)
 - **Session Management**: Secure PostgreSQL-backed sessions with 7-day expiry
-- **SSO Integration**: JWT-based single sign-on to external Business Intelligence Tool
+- **File Management**: Local file storage with automatic cleanup and serving via /api/files endpoints
+- **Email System**: Outlook Gov SMTP for transactional emails
 
 ### Business Development (BOU) Features
 - **Capture Questions Module**: Multi-phase questionnaire system (CaptureQuestionsModule.tsx)
@@ -74,18 +95,21 @@ Requires `.env` file with:
 - **BOU Admin System**: Dedicated admin interface for managing quick links, hero images, training content, bot settings, assignments, and page layout
 
 ### IDIQ Management
-- **AI-Powered Opportunity Scoring**: Automated relevance scoring for opportunities
-- **Email Ingestion**: Automated parsing of opportunity emails
+- **Opportunity Tracking**: Manual opportunity entry and management
 - **Team Discussion**: Social commenting system with replies and likes
 - **User Feedback**: Thumbs up/down feedback system with private notes
 - **Analytics**: User read tracking and engagement metrics
+- **File Attachments**: Document upload and management for opportunities
+- ~~AI-Powered Opportunity Scoring~~ (disabled - no OpenAI API)
+- ~~Email Ingestion~~ (disabled - no AgentMail webhook)
 
 ### Content Management
 - **Customizable Content Blocks**: Division-specific editable areas (EditableContentBlock.tsx)
 - **Team Spotlights**: Achievement highlighting widgets (EditableTeamSpotlights.tsx)
 - **Newsletter System**: Division-specific newsletters with view analytics
 - **LinkedIn Post Sync**: Manual synchronization of company LinkedIn posts
-- **Trip Reports**: Form-based or PDF upload with AI summarization and search
+- **Trip Reports**: Form-based or PDF upload with search
+- ~~AI Trip Report Summarization~~ (disabled - no OpenAI API)
 
 ### Admin Features
 - User management, analytics dashboard, newsletter management, BOU admin panel
@@ -190,8 +214,33 @@ Requires `.env` file with:
 
 ## Deployment Notes
 
+### Dokku Deployment (Internal Server)
+This application is configured for internal deployment to Dokku. See `DEPLOYMENT.md` for detailed instructions.
+
+**Key Requirements**:
+- PostgreSQL database (auto-provisioned by Dokku postgres plugin)
+- Persistent storage volume mounted at `/app/storage` for local file storage
+- Outlook Gov SMTP credentials for email
+- Environment variables configured via `dokku config:set`
+
+**Build Process**:
 - Production build outputs to `dist/` (backend) and `dist/public/` (frontend)
 - Server serves both API and static files on single port (default 5000)
+- Buildpack: Node.js (specified in `.buildpacks`)
+- Process type: web (defined in `Procfile`)
+
+**Configuration**:
 - Requires proxy configuration with `trust proxy: 1` for secure cookies
 - Environment variable `NODE_ENV=production` enables optimizations
 - Database migrations not automated - use `db:push` with caution in production
+- File storage persists across deployments via Dokku volume mount
+
+**Disabled Features**:
+- No OpenAI API (Albers Bot, AI scoring, AI summarization disabled)
+- No Google Cloud Storage (using local file system)
+- No ClickUp integration (proposal dashboard disabled)
+- No SSO/JWT (BI Tool integration disabled)
+- No email ingestion webhook (AgentMail disabled)
+- No Resend email service (using Outlook Gov SMTP)
+
+See `.env.example` for all required environment variables.

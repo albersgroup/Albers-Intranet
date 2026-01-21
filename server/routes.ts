@@ -1,13 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { OpenAI } from "openai";
 import { Pool } from "pg";
 import multer from "multer";
 import path from "path";
-import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
+import { localFileStorage, ObjectNotFoundError } from "./localFileStorage";
 import { getSOPContext, getSOPByTitle } from "./sop-loader";
 import { getKnowledgeBase } from "./generate-knowledge-base";
-import { getUncachableResendClient, sendNewOpportunityEmail, sendTrainingAssignmentEmail, sendVerificationEmail, sendIdiqMentionEmail } from "./resend-client";
+import { sendNewOpportunityEmail, sendTrainingAssignmentEmail, sendVerificationEmail, sendIdiqMentionEmail } from "./smtp-client";
 import { 
   findUserByEmail, 
   createUser, 
@@ -56,11 +55,7 @@ async function sendTrainingAssignmentNotifications(
     const assignerName = assigner ? `${assigner.first_name || ''} ${assigner.last_name || ''}`.trim() || 'BOU Admin' : 'BOU Admin';
     
     // Get base URL for links
-    const baseUrl = process.env.REPLIT_DEV_DOMAIN 
-      ? `https://${process.env.REPLIT_DEV_DOMAIN}` 
-      : process.env.REPL_SLUG 
-        ? `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`
-        : 'https://albers.aero';
+    const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
     
     for (const notification of notifications) {
       try {
@@ -111,12 +106,12 @@ async function sendTrainingAssignmentNotifications(
   }
 }
 
-// Using Replit AI Integrations for OpenAI access without requiring API key
-// the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
-const openai = new OpenAI({
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY
-});
+// OpenAI features disabled for internal deployment
+// Features disabled: Albers Bot chat, IDIQ opportunity scoring, trip report summarization
+const OPENAI_ENABLED = false;
+
+// Stub for OpenAI (disabled, but needed for TypeScript compilation)
+const openai: any = null;
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -961,16 +956,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Endpoint to get upload URL for file uploads
+  // Disabled: This endpoint was for client-side GCS uploads which is not supported with local storage
+  // Use /api/upload endpoint instead for server-side file uploads
   app.post("/api/objects/upload", async (req, res) => {
-    try {
-      const { fileName } = req.body as { fileName?: string };
-      const objectStorageService = new ObjectStorageService();
-      const uploadURL = await objectStorageService.getObjectEntityUploadURL(fileName);
-      res.json({ uploadURL });
-    } catch (error) {
-      console.error("Error getting upload URL:", error);
-      res.status(500).json({ error: "Failed to get upload URL" });
-    }
+    res.status(501).json({ error: "Client-side uploads not supported. Use /api/upload endpoint instead." });
   });
 
   // Generic file upload endpoint for content blocks and other features
@@ -981,62 +970,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No file provided" });
       }
 
-      // Generate unique filename
-      const ext = path.extname(file.originalname);
-      const uniqueFilename = `content-blocks/${Date.now()}-${crypto.randomUUID()}${ext}`;
-      
-      const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      if (!bucketName) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
+      // Upload to local file storage
+      const customPath = `content-blocks/${Date.now()}-${crypto.randomUUID()}`;
+      const fileUrl = await localFileStorage.uploadFile(file.buffer, file.originalname, customPath);
 
-      // Upload to object storage using sidecar
-      const uploadResponse = await fetch('http://localhost:1106/object-storage/signed-object-url', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bucket_name: bucketName,
-          object_name: `public/${uniqueFilename}`,
-          method: 'PUT',
-          expires_at: new Date(Date.now() + 3600 * 1000).toISOString()
-        })
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error('Failed to get upload URL from object storage');
-      }
-
-      const { signed_url } = await uploadResponse.json();
-
-      // Upload the file to the signed URL
-      const putResponse = await fetch(signed_url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': file.mimetype,
-        },
-        body: file.buffer
-      });
-
-      if (!putResponse.ok) {
-        throw new Error('Failed to upload file to object storage');
-      }
-
-      // Return the public URL for accessing this file
-      const publicUrl = `/api/public-assets/${uniqueFilename}`;
-      
-      res.json({ url: publicUrl, fileName: file.originalname });
+      res.json({ url: fileUrl, fileName: file.originalname });
     } catch (error) {
       console.error("Error uploading file:", error);
       res.status(500).json({ error: "Failed to upload file" });
     }
   });
 
-  // Endpoint to serve uploaded files
+  // Endpoint to serve uploaded files (new path)
+  app.get("/api/files/:filename", async (req, res) => {
+    try {
+      const filename = req.params.filename;
+      await localFileStorage.downloadFile(filename, res);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      if (error instanceof ObjectNotFoundError) {
+        return res.sendStatus(404);
+      }
+      return res.sendStatus(500);
+    }
+  });
+
+  // Legacy endpoint for backwards compatibility with old URLs
   app.get("/objects/:objectPath(*)", async (req, res) => {
     try {
-      const objectStorageService = new ObjectStorageService();
-      const objectFile = await objectStorageService.getObjectEntityFile(req.path);
-      await objectStorageService.downloadObject(objectFile, res);
+      // Extract filename from legacy path
+      const filename = localFileStorage.extractFilename(req.path);
+      await localFileStorage.downloadFile(filename, res);
     } catch (error) {
       console.error("Error downloading object:", error);
       if (error instanceof ObjectNotFoundError) {
@@ -1046,41 +1010,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Endpoint to serve public assets from object storage (hero video, etc.)
-  // Uses Replit sidecar signed URLs for compatibility in both dev and production
+  // Endpoint to serve public assets from local file storage (hero video, etc.)
   app.get("/api/public-assets/:fileName(*)", async (req, res) => {
     try {
       const fileName = req.params.fileName;
-      const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      
-      if (!bucketName) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
-
-      const objectName = `public/${fileName}`;
-      
-      // Get signed URL from Replit sidecar (works in dev and production)
-      const signedUrlResponse = await fetch('http://localhost:1106/object-storage/signed-object-url', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bucket_name: bucketName,
-          object_name: objectName,
-          method: 'GET',
-          expires_at: new Date(Date.now() + 3600 * 1000).toISOString() // 1 hour expiry
-        })
-      });
-      
-      if (!signedUrlResponse.ok) {
-        return res.status(404).json({ error: "File not found" });
-      }
-      
-      const { signed_url } = await signedUrlResponse.json();
-      
-      // Redirect to signed URL for video streaming
-      res.redirect(signed_url);
+      // Map public-assets path to actual file storage path
+      const filePath = `public/${fileName}`;
+      await localFileStorage.downloadFile(filePath, res);
     } catch (error) {
       console.error("Error serving public asset:", error);
+      if (error instanceof ObjectNotFoundError) {
+        return res.sendStatus(404);
+      }
       res.status(500).json({ error: "Failed to serve asset" });
     }
   });
@@ -1154,6 +1095,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Chat endpoint with OpenAI integration and context awareness
   app.post("/api/chat", async (req, res) => {
+    // Albers Bot is disabled for internal deployment (no OpenAI API)
+    if (!OPENAI_ENABLED) {
+      return res.status(503).json({
+        error: "Albers Bot is currently unavailable",
+        message: "AI chat features are disabled in this deployment. Please contact your administrator if you need assistance."
+      });
+    }
+
     try {
       const { messages, uploadedFiles, pageContext, currentData, pageName } = req.body as {
         messages: Message[];
@@ -4006,33 +3955,12 @@ Ask about their role so you can guide them better.`;
         mediaType = 'video';
       }
 
-      // Upload to object storage
+      // Upload to local file storage
       const timestamp = Date.now();
       const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const objectPath = `bou-media/${timestamp}-${sanitizedName}`;
-      
-      const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      if (!bucketName) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
+      const customPath = `bou-media/${timestamp}-${sanitizedName}`;
 
-      const { Storage } = await import('@google-cloud/storage');
-      const storage = new Storage();
-      const bucket = storage.bucket(bucketName);
-      const blob = bucket.file(objectPath);
-
-      await blob.save(file.buffer, {
-        contentType: mimeType,
-        metadata: {
-          uploadedBy: userId,
-          originalName: file.originalname
-        }
-      });
-
-      // Make the file publicly readable
-      await blob.makePublic();
-
-      const publicUrl = `https://storage.googleapis.com/${bucketName}/${objectPath}`;
+      const publicUrl = await localFileStorage.uploadFile(file.buffer, file.originalname, customPath);
 
       res.json({
         url: publicUrl,
@@ -4220,9 +4148,14 @@ Ask about their role so you can guide them better.`;
     extractedPlaintext?: string;
     sourceType: string;
   }): Promise<string | null> {
+    // OpenAI features disabled for internal deployment
+    if (!OPENAI_ENABLED) {
+      return null;
+    }
+
     try {
       let contentToSummarize = "";
-      
+
       if (reportData.sourceType === 'document' && reportData.extractedPlaintext) {
         // For document-based reports, use extracted text
         contentToSummarize = `Event: ${reportData.eventName || 'Business Trip'}\nLocation: ${reportData.location || 'N/A'}\nDate: ${reportData.dateStart || 'N/A'}\n\nDocument Content:\n${reportData.extractedPlaintext.slice(0, 3000)}`;
@@ -4382,32 +4315,12 @@ Recommendations: ${reportData.recommendations || 'N/A'}`;
         return res.status(400).json({ error: "Only image files are allowed" });
       }
 
-      // Upload to object storage
+      // Upload to local file storage
       const timestamp = Date.now();
       const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const objectPath = `trip-reports/${timestamp}-${sanitizedName}`;
-      
-      const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      if (!bucketName) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
+      const customPath = `trip-reports/${timestamp}-${sanitizedName}`;
 
-      const { Storage } = await import('@google-cloud/storage');
-      const storageClient = new Storage();
-      const bucket = storageClient.bucket(bucketName);
-      const blob = bucket.file(objectPath);
-
-      await blob.save(file.buffer, {
-        contentType: file.mimetype,
-        metadata: {
-          uploadedBy: req.session.userId,
-          originalName: file.originalname
-        }
-      });
-
-      await blob.makePublic();
-
-      const publicUrl = `https://storage.googleapis.com/${bucketName}/${objectPath}`;
+      const publicUrl = await localFileStorage.uploadFile(file.buffer, file.originalname, customPath);
 
       res.json({
         url: publicUrl,
@@ -4440,49 +4353,14 @@ Recommendations: ${reportData.recommendations || 'N/A'}`;
         return res.status(400).json({ error: "Only PDF files are supported. Please convert your document to PDF before uploading." });
       }
 
-      const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      if (!bucketName) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
-
-      const { objectStorageClient } = await import('./objectStorage');
-      const bucket = objectStorageClient.bucket(bucketName);
       const timestamp = Date.now();
 
-      // Upload PDF to storage
-      const pdfPath = `trip-reports/documents/${timestamp}-${file.originalname}`;
-      const pdfBlob = bucket.file(pdfPath);
-      await pdfBlob.save(file.buffer, {
-        contentType: 'application/pdf',
-        metadata: {
-          uploadedBy: req.session.userId,
-          originalName: file.originalname
-        }
-      });
-      
-      // Store the internal path (will use signed URLs to serve)
-      const originalFileUrl = `/api/trip-reports/document/${bucketName}/${pdfPath}`;
-      
-      // Get a signed URL for immediate preview in the dialog
-      let previewUrl = originalFileUrl;
-      try {
-        const signedUrlResponse = await fetch('http://localhost:1106/object-storage/signed-object-url', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            bucket_name: bucketName,
-            object_name: pdfPath,
-            method: 'GET',
-            expires_at: new Date(Date.now() + 3600 * 1000).toISOString() // 1 hour expiry
-          })
-        });
-        if (signedUrlResponse.ok) {
-          const { signed_url } = await signedUrlResponse.json();
-          previewUrl = signed_url;
-        }
-      } catch (signedUrlError) {
-        console.error("Error getting signed URL for preview:", signedUrlError);
-      }
+      // Upload PDF to local file storage
+      const customPath = `trip-reports/documents/${timestamp}-${file.originalname}`;
+      const originalFileUrl = await localFileStorage.uploadFile(file.buffer, file.originalname, customPath);
+
+      // For local storage, preview URL is the same as original URL
+      const previewUrl = originalFileUrl;
 
       // Extract text from PDF for search indexing
       let extractedPlaintext = '';
@@ -4997,24 +4875,10 @@ Recommendations: ${reportData.recommendations || 'N/A'}`;
 
       const timestamp = Date.now();
       const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const objectPath = `public/bou/hero/${timestamp}-${sanitizedName}`;
-      
-      const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      if (!bucketName) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
+      const customPath = `public/bou/hero/${timestamp}-${sanitizedName}`;
 
-      const { objectStorageClient } = await import('./objectStorage');
-      const bucket = objectStorageClient.bucket(bucketName);
-      const blob = bucket.file(objectPath);
-
-      await blob.save(file.buffer, {
-        contentType: file.mimetype,
-        metadata: { uploadedBy: userId, originalName: file.originalname }
-      });
-
-      // Use the public assets endpoint with signed URLs (bucket doesn't allow makePublic)
-      const publicUrl = `/api/public-assets/bou/hero/${timestamp}-${sanitizedName}`;
+      // Upload to local file storage
+      const publicUrl = await localFileStorage.uploadFile(file.buffer, file.originalname, customPath);
       const altText = req.body.altText || '';
 
       const result = await dbPool.query(
@@ -5269,24 +5133,10 @@ Recommendations: ${reportData.recommendations || 'N/A'}`;
 
       const timestamp = Date.now();
       const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const objectPath = `public/bou/training-slides/${timestamp}-${sanitizedName}`;
-      
-      const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      if (!bucketName) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
+      const customPath = `public/bou/training-slides/${timestamp}-${sanitizedName}`;
 
-      const { objectStorageClient } = await import('./objectStorage');
-      const bucket = objectStorageClient.bucket(bucketName);
-      const blob = bucket.file(objectPath);
-
-      await blob.save(file.buffer, {
-        contentType: file.mimetype,
-        metadata: { uploadedBy: userId, originalName: file.originalname }
-      });
-
-      // Use the public assets endpoint with signed URLs (bucket doesn't allow makePublic)
-      const publicUrl = `/api/public-assets/bou/training-slides/${timestamp}-${sanitizedName}`;
+      // Upload to local file storage
+      const publicUrl = await localFileStorage.uploadFile(file.buffer, file.originalname, customPath);
       const { title, caption, sortOrder, categoryId } = req.body;
 
       if (!categoryId) {
@@ -6370,26 +6220,12 @@ Recommendations: ${reportData.recommendations || 'N/A'}`;
         return res.status(400).json({ error: "Title is required" });
       }
 
-      // Upload file to object storage
+      // Upload file to local file storage
       const timestamp = Date.now();
       const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const objectPath = `public/${division}/newsletters/${timestamp}-${sanitizedName}`;
-      
-      const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      if (!bucketName) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
+      const customPath = `public/${division}/newsletters/${timestamp}-${sanitizedName}`;
 
-      const { objectStorageClient } = await import('./objectStorage');
-      const bucket = objectStorageClient.bucket(bucketName);
-      const blob = bucket.file(objectPath);
-
-      await blob.save(file.buffer, {
-        contentType: file.mimetype,
-        metadata: { uploadedBy: userId, originalName: file.originalname }
-      });
-
-      const publicUrl = `/api/public-assets/${division}/newsletters/${timestamp}-${sanitizedName}`;
+      const publicUrl = await localFileStorage.uploadFile(file.buffer, file.originalname, customPath);
 
       // Archive all current newsletters for this division
       await dbPool.query(
@@ -6468,17 +6304,11 @@ Recommendations: ${reportData.recommendations || 'N/A'}`;
         return res.status(404).json({ error: "Newsletter not found" });
       }
 
-      // Delete the file from storage if it exists
-      if (newsletter.rows[0].file_url && newsletter.rows[0].file_url.startsWith('/api/public-assets/')) {
+      // Delete the file from local storage if it exists
+      if (newsletter.rows[0].file_url && newsletter.rows[0].file_url.startsWith('/api/files/')) {
         try {
-          const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-          if (bucketName) {
-            const objectPath = 'public' + newsletter.rows[0].file_url.replace('/api/public-assets', '');
-            const { objectStorageClient } = await import('./objectStorage');
-            const bucket = objectStorageClient.bucket(bucketName);
-            const blob = bucket.file(objectPath);
-            await blob.delete();
-          }
+          const filename = newsletter.rows[0].file_url.replace('/api/files/', '');
+          await localFileStorage.deleteFile(filename);
         } catch (deleteError) {
           console.error("Error deleting newsletter file:", deleteError);
           // Continue with deletion even if file delete fails
@@ -6775,22 +6605,11 @@ Recommendations: ${reportData.recommendations || 'N/A'}`;
         return res.status(400).json({ error: "Unsupported file format" });
       }
       
-      // Upload to object storage
-      const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      if (!bucketName) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
-      
-      const fileName = `idiq-uploads/${Date.now()}-${file.originalname}`;
-      const { objectStorageClient } = await import('./objectStorage');
-      const bucket = objectStorageClient.bucket(bucketName);
-      const blob = bucket.file(fileName);
-      
-      await blob.save(file.buffer, {
-        metadata: { contentType: file.mimetype }
-      });
-      
-      // Create upload batch record - store file path, not signed URL
+      // Upload to local file storage
+      const customPath = `idiq-uploads/${Date.now()}-${file.originalname}`;
+      const fileName = await localFileStorage.uploadFile(file.buffer, file.originalname, customPath);
+
+      // Create upload batch record - store file path
       const batchResult = await dbPool.query(`
         INSERT INTO idiq_upload_batches (file_name, file_url, file_type, status, uploaded_by)
         VALUES ($1, $2, $3, 'processing', $4)
@@ -6830,20 +6649,9 @@ Recommendations: ${reportData.recommendations || 'N/A'}`;
         return res.status(400).json({ error: "Unsupported file format" });
       }
       
-      // Upload to object storage
-      const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-      if (!bucketName) {
-        return res.status(500).json({ error: "Object storage not configured" });
-      }
-      
-      const fileName = `idiq-capabilities/${Date.now()}-${file.originalname}`;
-      const { objectStorageClient } = await import('./objectStorage');
-      const bucket = objectStorageClient.bucket(bucketName);
-      const blob = bucket.file(fileName);
-      
-      await blob.save(file.buffer, {
-        metadata: { contentType: file.mimetype }
-      });
+      // Upload to local file storage
+      const customPath = `idiq-capabilities/${Date.now()}-${file.originalname}`;
+      const fileName = await localFileStorage.uploadFile(file.buffer, file.originalname, customPath);
       
       // Extract text from document for AI context
       let extractedText = '';
@@ -7208,6 +7016,15 @@ Recommendations: ${reportData.recommendations || 'N/A'}`;
 
   // AI function to extract opportunities from document text
   async function extractOpportunitiesWithAI(text: string, fileName: string): Promise<any[]> {
+    // OpenAI features disabled for internal deployment
+    if (!OPENAI_ENABLED) {
+      return [{
+        title: `Imported from ${fileName}`,
+        description: text.substring(0, 1000),
+        rawContent: text,
+      }];
+    }
+
     try {
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
@@ -7255,6 +7072,22 @@ If no clear opportunities are found, extract what information you can and create
     tags: string[];
     aiCategory: string;
   }> {
+    // OpenAI features disabled for internal deployment
+    if (!OPENAI_ENABLED) {
+      return {
+        matchScore: 50,
+        relevancySummary: 'AI scoring disabled - manual review required',
+        whyRelevant: 'AI scoring unavailable for internal deployment',
+        pastPerformanceMatch: 'None',
+        capabilityMatch: [],
+        requirements: [],
+        discriminatorsStrengths: [],
+        discriminatorsWeaknesses: [],
+        tags: [],
+        aiCategory: 'Unclassified',
+      };
+    }
+
     try {
       // Get capability documents for context
       const capDocs = await dbPool.query(`

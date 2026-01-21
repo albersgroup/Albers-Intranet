@@ -54,6 +54,7 @@ import ThemeToggle from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { isAnyAdmin, canAccessAdminPanel, canEditDivision, canEditBouAdmin, canEditBdAdmin, getRoleDisplayName, DIVISION_NAMES } from "@/lib/permissions";
+import { FEATURES } from "@/config/features";
 
 interface NavItem {
   title: string;
@@ -102,11 +103,14 @@ const divisions: DivisionConfig[] = [
         icon: Presentation, 
         children: [
           { title: "BOU Home", icon: Home, url: "/bou" },
-          { title: "Proposal Dashboard", icon: LayoutDashboard, url: "/proposal-dashboard" },
+          // Proposal Dashboard disabled (requires ClickUp integration)
+          ...(FEATURES.CLICKUP_INTEGRATION ? [{ title: "Proposal Dashboard", icon: LayoutDashboard, url: "/proposal-dashboard" }] : []),
           { title: "Training", icon: Presentation, url: "/training" },
-          { title: "Business Intelligence Tool", icon: BarChart3, externalUrl: "/api/easy-bi-reports" },
+          // BI Tool SSO disabled for internal deployment
+          ...(FEATURES.SSO_BI_TOOL ? [{ title: "Business Intelligence Tool", icon: BarChart3, externalUrl: "/api/sso/bi-reports" }] : []),
           { title: "GovDash", icon: LayoutDashboard, externalUrl: "https://dashboard.govdash.com/login" },
-          { title: "ClickUp", icon: CheckSquare, externalUrl: "https://app.clickup.com/login" },
+          // ClickUp integration disabled for internal deployment
+          ...(FEATURES.CLICKUP_INTEGRATION ? [{ title: "ClickUp", icon: CheckSquare, externalUrl: "https://app.clickup.com/login" }] : []),
           { title: "Salesforce", icon: ExternalLink, externalUrl: "https://albers.my.salesforce.com/" },
         ]
       },
@@ -120,7 +124,8 @@ const divisions: DivisionConfig[] = [
           { title: "Healthcare Portal", icon: Heart, externalUrl: "https://www.anthem.com/" },
         ]
       },
-      { title: "Albers Bot", icon: Bot, url: "/albers-bot" },
+      // Albers Bot disabled for internal deployment (no OpenAI API)
+      ...(FEATURES.ALBERS_BOT ? [{ title: "Albers Bot", icon: Bot, url: "/albers-bot" }] : []),
     ]
   },
   {

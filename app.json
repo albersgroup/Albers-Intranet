@@ -1,0 +1,65 @@
+{
+  "name": "Albers Aerospace Intranet",
+  "description": "Enterprise intranet application for Albers Aerospace Corporation",
+  "keywords": ["nodejs", "express", "react", "postgresql"],
+  "website": "https://github.com/albersaerospace/intranet",
+  "repository": "https://github.com/albersaerospace/intranet",
+  "env": {
+    "NODE_ENV": {
+      "description": "Node environment (production recommended)",
+      "value": "production",
+      "required": true
+    },
+    "SESSION_SECRET": {
+      "description": "Secret key for session encryption (generate a secure random string)",
+      "generator": "secret",
+      "required": true
+    },
+    "STORAGE_DIR": {
+      "description": "Directory for local file storage",
+      "value": "/app/storage",
+      "required": false
+    },
+    "SMTP_HOST": {
+      "description": "Outlook Gov SMTP server hostname",
+      "value": "smtp.office365.us",
+      "required": true
+    },
+    "SMTP_PORT": {
+      "description": "SMTP port (587 for TLS)",
+      "value": "587",
+      "required": true
+    },
+    "SMTP_USER": {
+      "description": "Outlook Gov email address for sending emails",
+      "required": true
+    },
+    "SMTP_PASS": {
+      "description": "Outlook Gov email password",
+      "required": true
+    },
+    "SMTP_FROM": {
+      "description": "From email address (usually same as SMTP_USER)",
+      "required": true
+    },
+    "PORT": {
+      "description": "Port for the web server",
+      "value": "5000",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "addons": [
+    "dokku-postgres"
+  ]
+}

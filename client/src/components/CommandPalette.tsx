@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Badge } from "@/components/ui/badge";
+import { FEATURES } from "@/config/features";
 
 interface SearchResult {
   id: string;
@@ -174,9 +175,18 @@ const CommandPalette = forwardRef<CommandPaletteHandle, CommandPaletteProps>(
       setQuery("");
     };
 
-    const allItems = user?.role === "admin" 
-      ? [...navigationItems, ...adminItems] 
-      : navigationItems;
+    // Filter out disabled features
+    const enabledNavigationItems = navigationItems.filter(item => {
+      if (item.id === "albers-bot") return FEATURES.ALBERS_BOT;
+      if (item.id === "proposal-dashboard") return FEATURES.CLICKUP_INTEGRATION;
+      if (item.id === "bi-reports") return FEATURES.SSO_BI_TOOL;
+      if (item.id === "clickup") return FEATURES.CLICKUP_INTEGRATION;
+      return true;
+    });
+
+    const allItems = user?.role === "admin"
+      ? [...enabledNavigationItems, ...adminItems]
+      : enabledNavigationItems;
 
     const filteredItems = query
       ? allItems.filter(item => {
@@ -199,8 +209,8 @@ const CommandPalette = forwardRef<CommandPaletteHandle, CommandPaletteProps>(
 
     return (
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput 
-          placeholder="Search pages, tools, news... or ask Albers Bot" 
+        <CommandInput
+          placeholder={FEATURES.ALBERS_BOT ? "Search pages, tools, news... or ask Albers Bot" : "Search pages, tools, news..."}
           value={query}
           onValueChange={setQuery}
           data-testid="input-command-search"
@@ -209,18 +219,20 @@ const CommandPalette = forwardRef<CommandPaletteHandle, CommandPaletteProps>(
           <CommandEmpty>
             <div className="py-6 text-center">
               <p className="text-sm text-muted-foreground mb-4">No results found for "{query}"</p>
-              <button
-                onClick={handleAskAlbersBot}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover-elevate"
-                data-testid="button-ask-albers-bot-empty"
-              >
-                <Bot className="w-4 h-4" />
-                Ask Albers Bot
-              </button>
+              {FEATURES.ALBERS_BOT && (
+                <button
+                  onClick={handleAskAlbersBot}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover-elevate"
+                  data-testid="button-ask-albers-bot-empty"
+                >
+                  <Bot className="w-4 h-4" />
+                  Ask Albers Bot
+                </button>
+              )}
             </div>
           </CommandEmpty>
 
-          {query.length > 0 && (
+          {FEATURES.ALBERS_BOT && query.length > 0 && (
             <>
               <CommandGroup heading="Ask AI">
                 <CommandItem
@@ -314,10 +326,12 @@ const CommandPalette = forwardRef<CommandPaletteHandle, CommandPaletteProps>(
               close
             </span>
           </div>
-          <span className="flex items-center gap-1">
-            <Search className="w-3 h-3" />
-            Powered by Albers Bot
-          </span>
+          {FEATURES.ALBERS_BOT && (
+            <span className="flex items-center gap-1">
+              <Search className="w-3 h-3" />
+              Powered by Albers Bot
+            </span>
+          )}
         </div>
       </CommandDialog>
     );

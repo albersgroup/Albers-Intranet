@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
 import FloatingChatbot from "@/components/FloatingChatbot";
+import { FEATURES } from "@/config/features";
 
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
@@ -200,11 +201,13 @@ function MainLayout() {
                 <Route component={NotFound} />
               </Switch>
             </main>
-            <FloatingChatbot 
-              pageContext="general"
-              currentData={{}}
-              pageName="Intranet"
-            />
+            {FEATURES.ALBERS_BOT && (
+              <FloatingChatbot
+                pageContext="general"
+                currentData={{}}
+                pageName="Intranet"
+              />
+            )}
           </SidebarInset>
         </div>
       </SidebarProvider>
