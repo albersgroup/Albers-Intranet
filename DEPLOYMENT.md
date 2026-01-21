@@ -23,10 +23,10 @@ dokku apps:create albers-intranet
 
 ```bash
 # Create the PostgreSQL service
-dokku postgres:create albers-db
+dokku postgres:create albers-intranet-db
 
 # Link it to your app (this automatically sets DATABASE_URL)
-dokku postgres:link albers-db albers-intranet
+dokku postgres:link albers-intranet-db albers-intranet
 ```
 
 ### 3. Create Persistent Storage for Files
