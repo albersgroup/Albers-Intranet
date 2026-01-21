@@ -960,6 +960,8 @@ export default function IdiqManagement() {
                 onClick={() => setShowHowItWorksDialog(true)}
                 className="bg-white/10 text-white border-white/20 hover:bg-white/20"
                 data-testid="button-how-it-works"
+                data-goatcounter-click="idiq-how-it-works"
+                data-goatcounter-title="Open IDIQ how it works dialog"
               >
                 <HelpCircle className="w-4 h-4 mr-2" />
                 How it Works
@@ -970,6 +972,8 @@ export default function IdiqManagement() {
                 onClick={() => setShowCapabilityDialog(true)}
                 className="bg-primary hover:bg-primary/90"
                 data-testid="button-manage-capabilities"
+                data-goatcounter-click="idiq-manage-capabilities"
+                data-goatcounter-title="Open capability documents management"
               >
                 <Target className="w-4 h-4 mr-2" />
                 Capabilities
@@ -980,6 +984,8 @@ export default function IdiqManagement() {
                 onClick={() => setShowSettingsDialog(true)}
                 className="bg-white/10 text-white border-white/20 hover:bg-white/20"
                 data-testid="button-idiq-settings"
+                data-goatcounter-click="idiq-settings"
+                data-goatcounter-title="Open IDIQ settings dialog"
               >
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
@@ -991,6 +997,8 @@ export default function IdiqManagement() {
                   onClick={() => setShowAnalyticsDialog(true)}
                   className="bg-white/10 text-white border-white/20 hover:bg-white/20"
                   data-testid="button-idiq-analytics"
+                  data-goatcounter-click="idiq-analytics"
+                  data-goatcounter-title="View IDIQ analytics dashboard"
                 >
                   <BarChart3 className="w-4 h-4 mr-2" />
                   Analytics
@@ -1018,6 +1026,8 @@ export default function IdiqManagement() {
             variant="default"
             onClick={() => {}}
             data-testid="button-search-idiq"
+            data-goatcounter-click="idiq-search"
+            data-goatcounter-title="Search IDIQ opportunities"
           >
             <Search className="w-4 h-4 mr-2" />
             Search
@@ -1207,7 +1217,12 @@ export default function IdiqManagement() {
                   Upload a Task Order list to get started. The AI will analyze each opportunity 
                   against Albers' capabilities and past performance.
                 </p>
-                <Button onClick={() => setShowUploadDialog(true)} data-testid="button-upload-first">
+                <Button
+                  onClick={() => setShowUploadDialog(true)}
+                  data-testid="button-upload-first"
+                  data-goatcounter-click="idiq-upload-first"
+                  data-goatcounter-title="Upload first task order list"
+                >
                   <Upload className="w-4 h-4 mr-2" />
                   Upload Your First List
                 </Button>
@@ -1241,9 +1256,11 @@ export default function IdiqManagement() {
                 className="hidden"
                 data-testid="input-file-upload"
               />
-              <Button 
+              <Button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
+                data-goatcounter-click="idiq-select-file"
+                data-goatcounter-title="Select task order file to upload"
               >
                 {isUploading ? (
                   <>
@@ -1293,10 +1310,12 @@ export default function IdiqManagement() {
                 className="hidden"
                 data-testid="input-capability-upload"
               />
-              <Button 
+              <Button
                 variant="outline"
                 onClick={() => capabilityFileInputRef.current?.click()}
                 disabled={isUploading}
+                data-goatcounter-click="idiq-upload-capability"
+                data-goatcounter-title="Upload capability document"
               >
                 {isUploading ? (
                   <>
@@ -1345,11 +1364,13 @@ export default function IdiqManagement() {
                     Re-score all opportunities using updated capability documents
                   </p>
                 </div>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={handleRescoreAll}
                   disabled={isRescoring}
                   data-testid="button-rescore-all"
+                  data-goatcounter-click="idiq-rescore-all"
+                  data-goatcounter-title="Re-score all opportunities with updated capabilities"
                 >
                   {isRescoring ? (
                     <>
@@ -1526,7 +1547,12 @@ export default function IdiqManagement() {
           </div>
 
           <DialogFooter>
-            <Button onClick={() => setShowHowItWorksDialog(false)} data-testid="button-close-how-it-works">
+            <Button
+              onClick={() => setShowHowItWorksDialog(false)}
+              data-testid="button-close-how-it-works"
+              data-goatcounter-click="idiq-close-how-it-works"
+              data-goatcounter-title="Close how it works dialog"
+            >
               Got it
             </Button>
           </DialogFooter>
@@ -1755,6 +1781,8 @@ export default function IdiqManagement() {
                             }}
                             disabled={deleteBatchMutation.isPending}
                             data-testid={`button-delete-batch-${batch.id}`}
+                            data-goatcounter-click="idiq-delete-batch"
+                            data-goatcounter-title="Delete batch and associated opportunities"
                           >
                             <Trash2 className="w-4 h-4 text-destructive" />
                           </Button>
@@ -1777,13 +1805,20 @@ export default function IdiqManagement() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSettingsDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowSettingsDialog(false)}
+              data-goatcounter-click="idiq-settings-cancel"
+              data-goatcounter-title="Cancel settings changes"
+            >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleSaveSettings}
               disabled={updateSettingsMutation.isPending || updateGlobalSettingsMutation.isPending}
               data-testid="button-save-settings"
+              data-goatcounter-click="idiq-save-settings"
+              data-goatcounter-title="Save IDIQ settings"
             >
               {(updateSettingsMutation.isPending || updateGlobalSettingsMutation.isPending) ? (
                 <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -1978,6 +2013,8 @@ export default function IdiqManagement() {
                           }
                         }}
                         data-testid="button-upvote"
+                        data-goatcounter-click="idiq-feedback-upvote"
+                        data-goatcounter-title="Give positive feedback on opportunity"
                       >
                         <ThumbsUp className="w-4 h-4" />
                       </Button>
@@ -1994,6 +2031,8 @@ export default function IdiqManagement() {
                           }
                         }}
                         data-testid="button-downvote"
+                        data-goatcounter-click="idiq-feedback-downvote"
+                        data-goatcounter-title="Give negative feedback on opportunity"
                       >
                         <ThumbsDown className="w-4 h-4" />
                       </Button>
@@ -2197,14 +2236,16 @@ export default function IdiqManagement() {
                       disabled={!newCommentText.trim() || addCommentMutation.isPending}
                       onClick={() => {
                         if (newCommentText.trim()) {
-                          addCommentMutation.mutate({ 
-                            id: selectedOpportunity.id, 
+                          addCommentMutation.mutate({
+                            id: selectedOpportunity.id,
                             content: newCommentText,
                             mentions: selectedMentions
                           });
                         }
                       }}
                       data-testid="button-add-comment"
+                      data-goatcounter-click="idiq-add-comment"
+                      data-goatcounter-title="Add comment to opportunity"
                     >
                       <Send className="w-4 h-4" />
                     </Button>
@@ -2233,15 +2274,17 @@ export default function IdiqManagement() {
                                   <div className="flex items-center gap-3 mt-2">
                                     <button
                                       className={`flex items-center gap-1 text-xs transition-colors ${
-                                        comment.likedByMe 
-                                          ? 'text-red-500' 
+                                        comment.likedByMe
+                                          ? 'text-red-500'
                                           : 'text-muted-foreground hover:text-red-500'
                                       }`}
-                                      onClick={() => likeCommentMutation.mutate({ 
-                                        commentId: comment.id, 
-                                        liked: comment.likedByMe 
+                                      onClick={() => likeCommentMutation.mutate({
+                                        commentId: comment.id,
+                                        liked: comment.likedByMe
                                       })}
                                       data-testid={`button-like-comment-${comment.id}`}
+                                      data-goatcounter-click="idiq-like-comment"
+                                      data-goatcounter-title="Like or unlike comment"
                                     >
                                       <Heart className={`w-3.5 h-3.5 ${comment.likedByMe ? 'fill-current' : ''}`} />
                                       {comment.likeCount > 0 && <span>{comment.likeCount}</span>}
@@ -2250,6 +2293,8 @@ export default function IdiqManagement() {
                                       className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                                       onClick={() => setReplyingToId(replyingToId === comment.id ? null : comment.id)}
                                       data-testid={`button-reply-comment-${comment.id}`}
+                                      data-goatcounter-click="idiq-reply-comment"
+                                      data-goatcounter-title="Reply to comment"
                                     >
                                       <Reply className="w-3.5 h-3.5" />
                                       Reply
@@ -2459,6 +2504,8 @@ export default function IdiqManagement() {
                         }
                       }}
                       data-testid="button-add-note"
+                      data-goatcounter-click="idiq-add-note"
+                      data-goatcounter-title="Add private note to opportunity"
                     >
                       Add
                     </Button>
@@ -2488,6 +2535,8 @@ export default function IdiqManagement() {
                                     });
                                   }
                                 }}
+                                data-goatcounter-click="idiq-update-note"
+                                data-goatcounter-title="Save note changes"
                               >
                                 Save
                               </Button>
@@ -2498,6 +2547,8 @@ export default function IdiqManagement() {
                                   setEditingNoteId(null);
                                   setEditingNoteText("");
                                 }}
+                                data-goatcounter-click="idiq-cancel-edit-note"
+                                data-goatcounter-title="Cancel note editing"
                               >
                                 Cancel
                               </Button>
@@ -2547,7 +2598,12 @@ export default function IdiqManagement() {
 
               <DialogFooter className="mt-6 gap-2">
                 {selectedOpportunity.originalUrl && (
-                  <Button variant="outline" asChild>
+                  <Button
+                    variant="outline"
+                    asChild
+                    data-goatcounter-click="idiq-view-source"
+                    data-goatcounter-title="View opportunity source URL"
+                  >
                     <a href={selectedOpportunity.originalUrl} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="w-4 h-4 mr-2" />
                       View Source
@@ -2557,12 +2613,14 @@ export default function IdiqManagement() {
                 <Button
                   variant={selectedOpportunity.status === 'saved' ? "secondary" : "default"}
                   onClick={() => {
-                    updateStatusMutation.mutate({ 
-                      id: selectedOpportunity.id, 
-                      status: selectedOpportunity.status === 'saved' ? 'reviewed' : 'saved' 
+                    updateStatusMutation.mutate({
+                      id: selectedOpportunity.id,
+                      status: selectedOpportunity.status === 'saved' ? 'reviewed' : 'saved'
                     });
                     setSelectedOpportunity(null);
                   }}
+                  data-goatcounter-click="idiq-toggle-save"
+                  data-goatcounter-title="Save or unsave opportunity for action"
                 >
                   {selectedOpportunity.status === 'saved' ? (
                     <>
@@ -2597,31 +2655,79 @@ export default function IdiqManagement() {
             <div className="grid grid-cols-2 gap-2">
               {feedbackType === 'upvote' ? (
                 <>
-                  <Button variant="outline" size="sm" onClick={() => setFeedbackReason("Direct past performance")}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFeedbackReason("Direct past performance")}
+                    data-goatcounter-click="idiq-feedback-reason"
+                    data-goatcounter-title="Select feedback reason - Direct past performance"
+                  >
                     Direct past performance
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => setFeedbackReason("Held contract vehicle")}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFeedbackReason("Held contract vehicle")}
+                    data-goatcounter-click="idiq-feedback-reason"
+                    data-goatcounter-title="Select feedback reason - Held contract vehicle"
+                  >
                     Held contract vehicle
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => setFeedbackReason("Known customer")}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFeedbackReason("Known customer")}
+                    data-goatcounter-click="idiq-feedback-reason"
+                    data-goatcounter-title="Select feedback reason - Known customer"
+                  >
                     Known customer
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => setFeedbackReason("Core capability match")}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFeedbackReason("Core capability match")}
+                    data-goatcounter-click="idiq-feedback-reason"
+                    data-goatcounter-title="Select feedback reason - Core capability match"
+                  >
                     Core capability match
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button variant="outline" size="sm" onClick={() => setFeedbackReason("Outside our capabilities")}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFeedbackReason("Outside our capabilities")}
+                    data-goatcounter-click="idiq-feedback-reason"
+                    data-goatcounter-title="Select feedback reason - Outside capabilities"
+                  >
                     Outside capabilities
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => setFeedbackReason("Too small/large")}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFeedbackReason("Too small/large")}
+                    data-goatcounter-click="idiq-feedback-reason"
+                    data-goatcounter-title="Select feedback reason - Too small/large"
+                  >
                     Wrong size
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => setFeedbackReason("Wrong location")}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFeedbackReason("Wrong location")}
+                    data-goatcounter-click="idiq-feedback-reason"
+                    data-goatcounter-title="Select feedback reason - Wrong location"
+                  >
                     Wrong location
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => setFeedbackReason("Already pursuing")}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFeedbackReason("Already pursuing")}
+                    data-goatcounter-click="idiq-feedback-reason"
+                    data-goatcounter-title="Select feedback reason - Already pursuing"
+                  >
                     Already pursuing
                   </Button>
                 </>
@@ -2635,13 +2741,20 @@ export default function IdiqManagement() {
             />
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setShowFeedbackDialog(false)}>
+            <Button
+              variant="ghost"
+              onClick={() => setShowFeedbackDialog(false)}
+              data-goatcounter-click="idiq-feedback-cancel"
+              data-goatcounter-title="Cancel feedback submission"
+            >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleSubmitFeedback}
               disabled={submitFeedbackMutation.isPending}
               data-testid="button-submit-feedback"
+              data-goatcounter-click="idiq-submit-feedback"
+              data-goatcounter-title="Submit opportunity feedback"
             >
               {submitFeedbackMutation.isPending ? "Submitting..." : "Submit Feedback"}
             </Button>

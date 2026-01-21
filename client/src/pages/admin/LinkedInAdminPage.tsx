@@ -178,7 +178,12 @@ export default function LinkedInAdminPage() {
             Manually sync your latest LinkedIn posts to display on the Corporate homepage
           </p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)} data-testid="button-sync-new-post">
+        <Button
+          onClick={() => setIsCreateDialogOpen(true)}
+          data-testid="button-sync-new-post"
+          data-goatcounter-click="admin-sync-linkedin-post"
+          data-goatcounter-title="Sync new LinkedIn post"
+        >
           <Plus className="w-4 h-4 mr-2" />
           Sync New Post
         </Button>
@@ -247,6 +252,8 @@ export default function LinkedInAdminPage() {
                         variant="outline"
                         onClick={() => setAsActive(post)}
                         data-testid={`button-set-active-${post.id}`}
+                        data-goatcounter-click="admin-set-active-linkedin-post"
+                        data-goatcounter-title="Set LinkedIn post as active"
                       >
                         Set as Active
                       </Button>
@@ -256,12 +263,20 @@ export default function LinkedInAdminPage() {
                       variant="ghost"
                       onClick={() => openEditDialog(post)}
                       data-testid={`button-edit-${post.id}`}
+                      data-goatcounter-click="admin-edit-linkedin-post"
+                      data-goatcounter-title="Edit LinkedIn post"
                     >
                       <Pencil className="w-4 h-4" />
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button size="icon" variant="ghost" data-testid={`button-delete-${post.id}`}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          data-testid={`button-delete-${post.id}`}
+                          data-goatcounter-click="admin-open-delete-linkedin-dialog"
+                          data-goatcounter-title="Open delete LinkedIn post confirmation"
+                        >
                           <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </AlertDialogTrigger>
@@ -274,7 +289,11 @@ export default function LinkedInAdminPage() {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => deleteMutation.mutate(post.id)}>
+                          <AlertDialogAction
+                            onClick={() => deleteMutation.mutate(post.id)}
+                            data-goatcounter-click="admin-delete-linkedin-post"
+                            data-goatcounter-title="Confirm delete LinkedIn post"
+                          >
                             Delete
                           </AlertDialogAction>
                         </AlertDialogFooter>
@@ -409,10 +428,12 @@ export default function LinkedInAdminPage() {
               >
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={createMutation.isPending || updateMutation.isPending}
                 data-testid="button-save-post"
+                data-goatcounter-click={`admin-${editingPost ? 'update' : 'sync'}-linkedin-post`}
+                data-goatcounter-title={editingPost ? "Update LinkedIn post" : "Sync LinkedIn post"}
               >
                 {(createMutation.isPending || updateMutation.isPending) && (
                   <RefreshCw className="w-4 h-4 mr-2 animate-spin" />

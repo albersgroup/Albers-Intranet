@@ -2217,8 +2217,8 @@ Ask about their role so you can guide them better.`;
   // Custom Content Blocks API (for homepage customization)
   // =============================================
 
-  // Get content block for a division (public - any authenticated user)
-  app.get("/api/content-blocks/:division/:blockType", isAuthenticated, async (req, res) => {
+  // Get content block for a division (public - no authentication required)
+  app.get("/api/content-blocks/:division/:blockType", async (req, res) => {
     try {
       const { division, blockType } = req.params;
       
@@ -2366,8 +2366,8 @@ Ask about their role so you can guide them better.`;
   // Team Spotlights API Endpoints
   // =============================================
 
-  // Get all team spotlights for a division
-  app.get("/api/team-spotlights/:division", isAuthenticated, async (req, res) => {
+  // Get all team spotlights for a division (public - no authentication required)
+  app.get("/api/team-spotlights/:division", async (req, res) => {
     try {
       const { division } = req.params;
       
@@ -2540,8 +2540,8 @@ Ask about their role so you can guide them better.`;
   // LinkedIn Posts API Endpoints (Manual Sync)
   // =============================================
 
-  // Get the latest active LinkedIn post
-  app.get("/api/linkedin/latest", isAuthenticated, async (req, res) => {
+  // Get the latest active LinkedIn post (public - no authentication required)
+  app.get("/api/linkedin/latest", async (req, res) => {
     try {
       const result = await dbPool.query(
         `SELECT lp.*, u.first_name, u.last_name 

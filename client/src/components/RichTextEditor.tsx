@@ -79,6 +79,8 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           onPressedChange={() => editor.chain().focus().toggleBold().run()}
           aria-label="Bold"
           data-testid="editor-bold"
+          data-goatcounter-click="editor-bold"
+          data-goatcounter-title="Editor Bold"
         >
           <Bold className="h-4 w-4" />
         </Toggle>
@@ -89,6 +91,8 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           onPressedChange={() => editor.chain().focus().toggleItalic().run()}
           aria-label="Italic"
           data-testid="editor-italic"
+          data-goatcounter-click="editor-italic"
+          data-goatcounter-title="Editor Italic"
         >
           <Italic className="h-4 w-4" />
         </Toggle>
@@ -99,6 +103,8 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           onPressedChange={() => editor.chain().focus().toggleUnderline().run()}
           aria-label="Underline"
           data-testid="editor-underline"
+          data-goatcounter-click="editor-underline"
+          data-goatcounter-title="Editor Underline"
         >
           <UnderlineIcon className="h-4 w-4" />
         </Toggle>
@@ -211,6 +217,8 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           disabled={!editor.can().undo()}
           className="h-8 px-2"
           data-testid="editor-undo"
+          data-goatcounter-click="editor-undo"
+          data-goatcounter-title="Editor Undo"
         >
           <Undo className="h-4 w-4" />
         </Button>
@@ -222,6 +230,8 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           disabled={!editor.can().redo()}
           className="h-8 px-2"
           data-testid="editor-redo"
+          data-goatcounter-click="editor-redo"
+          data-goatcounter-title="Editor Redo"
         >
           <Redo className="h-4 w-4" />
         </Button>

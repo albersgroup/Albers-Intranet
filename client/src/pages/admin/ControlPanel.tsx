@@ -711,6 +711,8 @@ export default function ControlPanel() {
                                 onClick={() => handleEditUser(user)}
                                 disabled={user.id === currentUser?.id}
                                 data-testid={`button-edit-user-${user.id}`}
+                                data-goatcounter-click="admin-edit-user"
+                                data-goatcounter-title="Edit user profile and role"
                               >
                                 <Edit2 className="w-4 h-4" />
                               </Button>
@@ -776,6 +778,8 @@ export default function ControlPanel() {
                                   onClick={handleSaveUser}
                                   disabled={updateUserMutation.isPending}
                                   data-testid="button-save-user"
+                                  data-goatcounter-click="admin-save-user"
+                                  data-goatcounter-title="Save user profile changes"
                                 >
                                   {updateUserMutation.isPending ? (
                                     <>

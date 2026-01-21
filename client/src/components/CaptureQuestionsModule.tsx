@@ -477,6 +477,8 @@ export default function CaptureQuestionsModule({ onFormDataChange }: CaptureQues
                   size="sm"
                   className="flex-1 sm:flex-none"
                   data-testid="button-clear-draft"
+                  data-goatcounter-click="bou-capture-clear-draft"
+                  data-goatcounter-title="Capture Questions Clear Draft"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Clear Draft
@@ -486,6 +488,8 @@ export default function CaptureQuestionsModule({ onFormDataChange }: CaptureQues
                   disabled={!canSubmit || isSubmitting}
                   className="bg-primary hover:bg-primary/90 flex-1 sm:flex-none"
                   data-testid="button-submit-to-proposal"
+                  data-goatcounter-click="bou-capture-submit"
+                  data-goatcounter-title="Capture Questions Submit to Proposal Team"
                 >
                   <Send className="w-4 h-4 mr-2" />
                   {isSubmitting ? "Submitting..." : "Submit"}

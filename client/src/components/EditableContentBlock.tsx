@@ -222,6 +222,8 @@ export default function EditableContentBlock({
             className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={openEditDialog}
             data-testid="button-edit-content-block"
+            data-goatcounter-click="division-edit-content-block"
+            data-goatcounter-title="Edit Content Block"
           >
             <Pencil className="w-4 h-4" />
           </Button>
@@ -229,10 +231,12 @@ export default function EditableContentBlock({
         <CardContent className="p-0">
           <div className="flex flex-col md:flex-row">
             {displayData.imageUrl && (
-              <div 
+              <div
                 className="md:w-2/5 flex-shrink-0 bg-[#51142a] p-4 flex items-center justify-center cursor-pointer group/img relative"
                 onClick={() => setShowImagePreview(true)}
                 data-testid="button-content-block-enlarge"
+                data-goatcounter-click="division-content-block-enlarge"
+                data-goatcounter-title="Content Block Enlarge Image"
               >
                 <img 
                   src={displayData.imageUrl} 
@@ -383,6 +387,8 @@ export default function EditableContentBlock({
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
                     data-testid="button-upload-image"
+                    data-goatcounter-click="division-content-upload-image"
+                    data-goatcounter-title="Content Block Upload Image"
                   >
                     {isUploading ? (
                       <>
@@ -418,7 +424,14 @@ export default function EditableContentBlock({
                   }}
                   data-testid="input-badge"
                 />
-                <Button type="button" variant="outline" onClick={addBadge} data-testid="button-add-badge">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={addBadge}
+                  data-testid="button-add-badge"
+                  data-goatcounter-click="division-content-add-badge"
+                  data-goatcounter-title="Content Block Add Badge"
+                >
                   Add
                 </Button>
               </div>
@@ -443,13 +456,20 @@ export default function EditableContentBlock({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditing(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditing(false)}
+              data-goatcounter-click="division-content-cancel"
+              data-goatcounter-title="Content Block Cancel"
+            >
               Cancel
             </Button>
-            <Button 
-              onClick={handleSave} 
+            <Button
+              onClick={handleSave}
               disabled={saveMutation.isPending}
               data-testid="button-save-content"
+              data-goatcounter-click="division-content-save"
+              data-goatcounter-title="Content Block Save"
             >
               {saveMutation.isPending ? (
                 <>

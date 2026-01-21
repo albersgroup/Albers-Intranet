@@ -127,6 +127,8 @@ export default function ForgotPassword() {
                   onClick={() => setLocation("/login")}
                   className="gap-2"
                   data-testid="button-back-to-login"
+                  data-goatcounter-click="auth-forgot-password-back"
+                  data-goatcounter-title="Navigate back to login from forgot password"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back to login
@@ -150,6 +152,8 @@ export default function ForgotPassword() {
                     onClick={() => setLocation("/login")}
                     className="w-full"
                     data-testid="button-return-to-login"
+                    data-goatcounter-click="auth-forgot-password-return"
+                    data-goatcounter-title="Return to login after password reset email sent"
                   >
                     Return to Login
                   </Button>
@@ -177,11 +181,13 @@ export default function ForgotPassword() {
                       )}
                     />
 
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       className="w-full"
                       disabled={isLoading}
                       data-testid="button-send-reset-link"
+                      data-goatcounter-click="auth-forgot-password-submit"
+                      data-goatcounter-title="Submit email for password reset link"
                     >
                       {isLoading ? (
                         <>

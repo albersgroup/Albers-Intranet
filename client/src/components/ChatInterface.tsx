@@ -85,6 +85,8 @@ export default function ChatInterface() {
                 onClick={() => handleSuggestedAction(action)}
                 className="rounded-full text-xs"
                 data-testid={`action-${index}`}
+                data-goatcounter-click={`chatbot-quick-action-${index}`}
+                data-goatcounter-title={`Chat Quick Action: ${action}`}
               >
                 {action}
               </Button>

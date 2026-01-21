@@ -199,6 +199,8 @@ export default function VerifyEmail() {
                     className="w-full"
                     disabled={isLoading}
                     data-testid="button-verify"
+                    data-goatcounter-click="auth-verify-email-submit"
+                    data-goatcounter-title="Email verification code submission"
                   >
                     {isLoading ? (
                       <>

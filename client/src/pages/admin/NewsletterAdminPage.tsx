@@ -269,7 +269,11 @@ export default function NewsletterAdminPage() {
         
         <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
           <DialogTrigger asChild>
-            <Button data-testid="button-upload-newsletter">
+            <Button
+              data-testid="button-upload-newsletter"
+              data-goatcounter-click="admin-upload-newsletter"
+              data-goatcounter-title="Open newsletter upload dialog"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Upload Newsletter
             </Button>
@@ -356,10 +360,22 @@ export default function NewsletterAdminPage() {
               </div>
               
               <div className="flex justify-end gap-3">
-                <Button type="button" variant="outline" onClick={() => setIsUploadDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsUploadDialogOpen(false)}
+                  data-goatcounter-click="admin-newsletter-cancel"
+                  data-goatcounter-title="Cancel newsletter upload"
+                >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isUploading || createMutation.isPending} data-testid="button-submit-newsletter">
+                <Button
+                  type="submit"
+                  disabled={isUploading || createMutation.isPending}
+                  data-testid="button-submit-newsletter"
+                  data-goatcounter-click="admin-submit-newsletter"
+                  data-goatcounter-title="Submit newsletter upload"
+                >
                   {isUploading || createMutation.isPending ? (
                     <>
                       <Upload className="w-4 h-4 mr-2 animate-spin" />
@@ -414,7 +430,13 @@ export default function NewsletterAdminPage() {
                   </div>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button size="icon" variant="ghost" data-testid={`button-delete-newsletter-${newsletter.id}`}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        data-testid={`button-delete-newsletter-${newsletter.id}`}
+                        data-goatcounter-click="admin-delete-newsletter"
+                        data-goatcounter-title="Delete newsletter"
+                      >
                         <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
                     </AlertDialogTrigger>

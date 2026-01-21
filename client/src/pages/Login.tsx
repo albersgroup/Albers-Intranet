@@ -146,11 +146,13 @@ export default function Login() {
                     </FormItem>
                   )}
                 />
-                <Button 
-                  type="submit" 
-                  className="w-full" 
+                <Button
+                  type="submit"
+                  className="w-full"
                   disabled={isLoading}
                   data-testid="button-login"
+                  data-goatcounter-click="auth-login-submit"
+                  data-goatcounter-title="User login form submission"
                 >
                   {isLoading ? (
                     <>

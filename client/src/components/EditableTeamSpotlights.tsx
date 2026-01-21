@@ -267,6 +267,8 @@ export default function EditableTeamSpotlights({
                 onClick={openEditDialog}
                 className="h-8 w-8"
                 data-testid="button-edit-spotlights"
+                data-goatcounter-click="division-edit-spotlights"
+                data-goatcounter-title="Edit Team Spotlights"
               >
                 <Pencil className="w-4 h-4" />
               </Button>
@@ -342,6 +344,8 @@ export default function EditableTeamSpotlights({
                       size="sm"
                       onClick={() => removeSpotlight(index)}
                       className="text-destructive hover:text-destructive"
+                      data-goatcounter-click={`division-spotlight-remove-${index}`}
+                      data-goatcounter-title="Remove Spotlight"
                     >
                       <X className="w-4 h-4 mr-1" />
                       Remove
@@ -475,6 +479,8 @@ export default function EditableTeamSpotlights({
                 variant="outline"
                 onClick={addSpotlight}
                 className="w-full"
+                data-goatcounter-click="division-spotlight-add"
+                data-goatcounter-title="Add Spotlight"
               >
                 Add Another Spotlight
               </Button>
@@ -482,12 +488,19 @@ export default function EditableTeamSpotlights({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditing(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditing(false)}
+              data-goatcounter-click="division-spotlight-cancel"
+              data-goatcounter-title="Spotlights Cancel"
+            >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleSave}
               disabled={saveMutation.isPending}
+              data-goatcounter-click="division-spotlight-save"
+              data-goatcounter-title="Spotlights Save"
             >
               {saveMutation.isPending ? (
                 <>

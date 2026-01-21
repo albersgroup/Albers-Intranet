@@ -453,6 +453,8 @@ export default function NewOpportunityForm() {
                 type="submit"
                 data-testid="button-submit-opportunity"
                 className="flex items-center gap-2"
+                data-goatcounter-click="bou-new-opportunity-submit"
+                data-goatcounter-title="New Opportunity Form Submit"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 Submit Opportunity
@@ -463,6 +465,8 @@ export default function NewOpportunityForm() {
                 onClick={handleClearDraft}
                 data-testid="button-clear-draft"
                 className="flex items-center gap-2"
+                data-goatcounter-click="bou-new-opportunity-clear-draft"
+                data-goatcounter-title="New Opportunity Form Clear Draft"
               >
                 <Trash2 className="w-4 h-4" />
                 Clear Draft

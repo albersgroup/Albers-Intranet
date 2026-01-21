@@ -224,6 +224,8 @@ const CommandPalette = forwardRef<CommandPaletteHandle, CommandPaletteProps>(
                   onClick={handleAskAlbersBot}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover-elevate"
                   data-testid="button-ask-albers-bot-empty"
+                  data-goatcounter-click="command-ask-bot-empty"
+                  data-goatcounter-title="Command Palette Ask Bot (No Results)"
                 >
                   <Bot className="w-4 h-4" />
                   Ask Albers Bot
@@ -239,6 +241,8 @@ const CommandPalette = forwardRef<CommandPaletteHandle, CommandPaletteProps>(
                   onSelect={handleAskAlbersBot}
                   className="flex items-center gap-3 py-3"
                   data-testid="command-ask-albers-bot"
+                  data-goatcounter-click="command-ask-bot"
+                  data-goatcounter-title="Command Palette Ask Albers Bot"
                 >
                   <div className="p-2 rounded-lg bg-primary/10">
                     <Bot className="w-4 h-4 text-primary" />
@@ -265,6 +269,8 @@ const CommandPalette = forwardRef<CommandPaletteHandle, CommandPaletteProps>(
                       onSelect={() => handleSelect(item)}
                       className="flex items-center gap-3"
                       data-testid={`command-${item.id}`}
+                      data-goatcounter-click={`command-${item.id}`}
+                      data-goatcounter-title={`Command: ${item.title}`}
                     >
                       <Icon className="w-4 h-4 text-muted-foreground" />
                       <div className="flex-1 min-w-0">

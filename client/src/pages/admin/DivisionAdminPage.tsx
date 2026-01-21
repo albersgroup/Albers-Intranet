@@ -511,11 +511,24 @@ function LayoutManager({ division, divisionName }: { division: string; divisionN
             </CardDescription>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => resetMutation.mutate()} disabled={resetMutation.isPending} data-testid="button-reset-layout">
+            <Button
+              variant="outline"
+              onClick={() => resetMutation.mutate()}
+              disabled={resetMutation.isPending}
+              data-testid="button-reset-layout"
+              data-goatcounter-click="division-reset-layout"
+              data-goatcounter-title="Reset division layout to defaults"
+            >
               <RotateCcw className="w-4 h-4 mr-2" />
               Reset
             </Button>
-            <Button onClick={handleSave} disabled={!hasChanges || updateMutation.isPending} data-testid="button-save-layout">
+            <Button
+              onClick={handleSave}
+              disabled={!hasChanges || updateMutation.isPending}
+              data-testid="button-save-layout"
+              data-goatcounter-click="division-save-layout"
+              data-goatcounter-title="Save division layout changes"
+            >
               <Save className="w-4 h-4 mr-2" />
               Save
             </Button>
@@ -580,6 +593,8 @@ function LayoutManager({ division, divisionName }: { division: string; divisionN
                     size="icon"
                     onClick={() => toggleVisibility(section.id)}
                     title={section.is_visible ? "Hide section" : "Show section"}
+                    data-goatcounter-click={`division-${section.is_visible ? 'hide' : 'show'}-section`}
+                    data-goatcounter-title={`${section.is_visible ? 'Hide' : 'Show'} section: ${section.display_name}`}
                   >
                     {section.is_visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                   </Button>
@@ -697,11 +712,25 @@ function HeroManager({ division, divisionName }: { division: string; divisionNam
                     <span className="text-white text-xs truncate">{asset.file_name}</span>
                     <div className="flex gap-1">
                       {!asset.is_active && (
-                        <Button size="icon" variant="ghost" className="h-6 w-6 text-white hover:text-white hover:bg-white/20" onClick={() => activateMutation.mutate(asset.id)}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-6 w-6 text-white hover:text-white hover:bg-white/20"
+                          onClick={() => activateMutation.mutate(asset.id)}
+                          data-goatcounter-click="division-activate-hero"
+                          data-goatcounter-title="Activate hero image"
+                        >
                           <Eye className="w-3 h-3" />
                         </Button>
                       )}
-                      <Button size="icon" variant="ghost" className="h-6 w-6 text-white hover:text-white hover:bg-white/20" onClick={() => deleteMutation.mutate(asset.id)}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6 text-white hover:text-white hover:bg-white/20"
+                        onClick={() => deleteMutation.mutate(asset.id)}
+                        data-goatcounter-click="division-delete-hero"
+                        data-goatcounter-title="Delete hero image"
+                      >
                         <Trash2 className="w-3 h-3" />
                       </Button>
                     </div>
@@ -791,7 +820,13 @@ function QuickLinksManager({ division, divisionName }: { division: string; divis
               </Select>
             </div>
             <div className="flex items-end">
-              <Button onClick={() => createMutation.mutate(newLink)} disabled={!newLink.title || !newLink.url || createMutation.isPending} data-testid="button-add-link">
+              <Button
+                onClick={() => createMutation.mutate(newLink)}
+                disabled={!newLink.title || !newLink.url || createMutation.isPending}
+                data-testid="button-add-link"
+                data-goatcounter-click="division-create-quick-link"
+                data-goatcounter-title="Create quick link"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Link
               </Button>
@@ -823,10 +858,22 @@ function QuickLinksManager({ division, divisionName }: { division: string; divis
                     <p className="text-xs text-muted-foreground truncate">{link.url}</p>
                   </div>
                   <div className="flex gap-1">
-                    <Button size="icon" variant="ghost" onClick={() => updateMutation.mutate({ id: link.id, data: { is_visible: !link.is_visible } })}>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => updateMutation.mutate({ id: link.id, data: { is_visible: !link.is_visible } })}
+                      data-goatcounter-click={`division-${link.is_visible ? 'hide' : 'show'}-quick-link`}
+                      data-goatcounter-title={`${link.is_visible ? 'Hide' : 'Show'} quick link`}
+                    >
                       {link.is_visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                     </Button>
-                    <Button size="icon" variant="ghost" onClick={() => deleteMutation.mutate(link.id)}>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => deleteMutation.mutate(link.id)}
+                      data-goatcounter-click="division-delete-quick-link"
+                      data-goatcounter-title="Delete quick link"
+                    >
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </div>
@@ -966,7 +1013,11 @@ function NewsletterManager({ division, divisionName }: { division: string; divis
               />
               <label htmlFor={`newsletter-upload-${division}`}>
                 <Button asChild disabled={uploading || !newTitle.trim()}>
-                  <span data-testid="button-upload-newsletter">
+                  <span
+                    data-testid="button-upload-newsletter"
+                    data-goatcounter-click="division-upload-newsletter"
+                    data-goatcounter-title="Upload newsletter PDF"
+                  >
                     <Upload className="w-4 h-4 mr-2" />
                     {uploading ? "Uploading..." : "Upload PDF"}
                   </span>
@@ -1014,19 +1065,27 @@ function NewsletterManager({ division, divisionName }: { division: string; divis
                       </Button>
                     </a>
                     {!newsletter.is_current && (
-                      <Button 
-                        size="icon" 
-                        variant="ghost" 
+                      <Button
+                        size="icon"
+                        variant="ghost"
                         onClick={() => setCurrentMutation.mutate(newsletter.id)}
                         title="Set as current"
                         data-testid={`button-set-current-${newsletter.id}`}
+                        data-goatcounter-click="division-set-current-newsletter"
+                        data-goatcounter-title="Set newsletter as current"
                       >
                         <Star className="w-4 h-4" />
                       </Button>
                     )}
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button size="icon" variant="ghost" data-testid={`button-delete-newsletter-${newsletter.id}`}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          data-testid={`button-delete-newsletter-${newsletter.id}`}
+                          data-goatcounter-click="division-open-delete-newsletter-dialog"
+                          data-goatcounter-title="Open delete newsletter confirmation"
+                        >
                           <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </AlertDialogTrigger>
@@ -1039,9 +1098,11 @@ function NewsletterManager({ division, divisionName }: { division: string; divis
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction 
-                            onClick={() => deleteMutation.mutate(newsletter.id)} 
+                          <AlertDialogAction
+                            onClick={() => deleteMutation.mutate(newsletter.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            data-goatcounter-click="division-delete-newsletter"
+                            data-goatcounter-title="Confirm delete newsletter"
                           >
                             Delete
                           </AlertDialogAction>
@@ -1124,7 +1185,13 @@ function BulletinsManager({ division, divisionName }: { division: string; divisi
                 <Switch checked={newBulletin.is_pinned} onCheckedChange={v => setNewBulletin(p => ({ ...p, is_pinned: v }))} data-testid="switch-bulletin-pinned" />
                 <Label>Pin to top</Label>
               </div>
-              <Button onClick={() => createMutation.mutate(newBulletin)} disabled={!newBulletin.title || !newBulletin.content || createMutation.isPending} data-testid="button-create-bulletin">
+              <Button
+                onClick={() => createMutation.mutate(newBulletin)}
+                disabled={!newBulletin.title || !newBulletin.content || createMutation.isPending}
+                data-testid="button-create-bulletin"
+                data-goatcounter-click="division-create-bulletin"
+                data-goatcounter-title="Create bulletin"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Create
               </Button>
@@ -1160,13 +1227,31 @@ function BulletinsManager({ division, divisionName }: { division: string; divisi
                       </p>
                     </div>
                     <div className="flex gap-1">
-                      <Button size="icon" variant="ghost" onClick={() => updateMutation.mutate({ id: bulletin.id, data: { is_pinned: !bulletin.is_pinned } })}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => updateMutation.mutate({ id: bulletin.id, data: { is_pinned: !bulletin.is_pinned } })}
+                        data-goatcounter-click={`division-${bulletin.is_pinned ? 'unpin' : 'pin'}-bulletin`}
+                        data-goatcounter-title={`${bulletin.is_pinned ? 'Unpin' : 'Pin'} bulletin`}
+                      >
                         {bulletin.is_pinned ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
                       </Button>
-                      <Button size="icon" variant="ghost" onClick={() => updateMutation.mutate({ id: bulletin.id, data: { is_published: !bulletin.is_published } })}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => updateMutation.mutate({ id: bulletin.id, data: { is_published: !bulletin.is_published } })}
+                        data-goatcounter-click={`division-${bulletin.is_published ? 'unpublish' : 'publish'}-bulletin`}
+                        data-goatcounter-title={`${bulletin.is_published ? 'Unpublish' : 'Publish'} bulletin`}
+                      >
                         {bulletin.is_published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                       </Button>
-                      <Button size="icon" variant="ghost" onClick={() => deleteMutation.mutate(bulletin.id)}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => deleteMutation.mutate(bulletin.id)}
+                        data-goatcounter-click="division-delete-bulletin"
+                        data-goatcounter-title="Delete bulletin"
+                      >
                         <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
                     </div>
@@ -1292,7 +1377,13 @@ function NewsManager({ division, divisionName }: { division: string; divisionNam
             </Button>
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button size="sm" className="gap-2" data-testid="button-create-article">
+                <Button
+                  size="sm"
+                  className="gap-2"
+                  data-testid="button-create-article"
+                  data-goatcounter-click="division-create-news-article"
+                  data-goatcounter-title="Create news article"
+                >
                   <Plus className="w-4 h-4" />
                   New Article
                 </Button>
@@ -1315,7 +1406,14 @@ function NewsManager({ division, divisionName }: { division: string; divisionNam
                     <Label>Content</Label>
                     <RichTextEditor content={formData.content} onChange={(content) => setFormData({ ...formData, content })} placeholder="Full article content" />
                   </div>
-                  <Button onClick={handleSubmit} disabled={createMutation.isPending} className="w-full" data-testid="button-submit-article">
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={createMutation.isPending}
+                    className="w-full"
+                    data-testid="button-submit-article"
+                    data-goatcounter-click="division-submit-news-article"
+                    data-goatcounter-title="Submit news article"
+                  >
                     {createMutation.isPending ? "Creating..." : "Create Article"}
                   </Button>
                 </div>
@@ -1346,7 +1444,14 @@ function NewsManager({ division, divisionName }: { division: string; divisionNam
                     <div className="flex items-center gap-1">
                       <Dialog open={editingArticle?.id === article.id} onOpenChange={(open) => { if (!open) { setEditingArticle(null); setFormData({ title: "", summary: "", content: "" }); } }}>
                         <DialogTrigger asChild>
-                          <Button size="icon" variant="ghost" onClick={() => handleEdit(article)} data-testid={`button-edit-${article.id}`}>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => handleEdit(article)}
+                            data-testid={`button-edit-${article.id}`}
+                            data-goatcounter-click="division-edit-news-article"
+                            data-goatcounter-title="Edit news article"
+                          >
                             <Pencil className="w-4 h-4" />
                           </Button>
                         </DialogTrigger>
@@ -1374,12 +1479,25 @@ function NewsManager({ division, divisionName }: { division: string; divisionNam
                           </div>
                         </DialogContent>
                       </Dialog>
-                      <Button size="icon" variant="ghost" onClick={() => archiveMutation.mutate({ id: article.id, isArchived: !article.is_archived })} data-testid={`button-archive-${article.id}`}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => archiveMutation.mutate({ id: article.id, isArchived: !article.is_archived })}
+                        data-testid={`button-archive-${article.id}`}
+                        data-goatcounter-click={`division-${article.is_archived ? 'unarchive' : 'archive'}-news-article`}
+                        data-goatcounter-title={`${article.is_archived ? 'Unarchive' : 'Archive'} news article`}
+                      >
                         {article.is_archived ? <ArchiveX className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button size="icon" variant="ghost" data-testid={`button-delete-${article.id}`}>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            data-testid={`button-delete-${article.id}`}
+                            data-goatcounter-click="division-open-delete-news-article-dialog"
+                            data-goatcounter-title="Open delete news article confirmation"
+                          >
                             <Trash2 className="w-4 h-4 text-destructive" />
                           </Button>
                         </AlertDialogTrigger>
@@ -1390,7 +1508,14 @@ function NewsManager({ division, divisionName }: { division: string; divisionNam
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deleteMutation.mutate(article.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                            <AlertDialogAction
+                              onClick={() => deleteMutation.mutate(article.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              data-goatcounter-click="division-delete-news-article"
+                              data-goatcounter-title="Confirm delete news article"
+                            >
+                              Delete
+                            </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
@@ -1524,7 +1649,12 @@ function LinkedInManager() {
               </CardTitle>
               <CardDescription>Manually sync LinkedIn posts to display on the Corporate homepage</CardDescription>
             </div>
-            <Button onClick={() => setIsCreateDialogOpen(true)} data-testid="button-sync-new-post">
+            <Button
+              onClick={() => setIsCreateDialogOpen(true)}
+              data-testid="button-sync-new-post"
+              data-goatcounter-click="division-sync-linkedin-post"
+              data-goatcounter-title="Sync new LinkedIn post"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Sync New Post
             </Button>
@@ -1569,10 +1699,40 @@ function LinkedInManager() {
                     {post.isActive && <Badge variant="default" className="bg-green-600"><Check className="w-3 h-3 mr-1" />Active</Badge>}
                   </div>
                   <div className="flex items-center gap-1">
-                    {!post.isActive && <Button size="sm" variant="outline" onClick={() => setAsActive(post)} data-testid={`button-set-active-${post.id}`}>Set as Active</Button>}
-                    <Button size="icon" variant="ghost" onClick={() => openEditDialog(post)} data-testid={`button-edit-linkedin-${post.id}`}><Pencil className="w-4 h-4" /></Button>
+                    {!post.isActive && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setAsActive(post)}
+                        data-testid={`button-set-active-${post.id}`}
+                        data-goatcounter-click="division-set-active-linkedin-post"
+                        data-goatcounter-title="Set LinkedIn post as active"
+                      >
+                        Set as Active
+                      </Button>
+                    )}
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => openEditDialog(post)}
+                      data-testid={`button-edit-linkedin-${post.id}`}
+                      data-goatcounter-click="division-edit-linkedin-post"
+                      data-goatcounter-title="Edit LinkedIn post"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
                     <AlertDialog>
-                      <AlertDialogTrigger asChild><Button size="icon" variant="ghost" data-testid={`button-delete-linkedin-${post.id}`}><Trash2 className="w-4 h-4 text-destructive" /></Button></AlertDialogTrigger>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          data-testid={`button-delete-linkedin-${post.id}`}
+                          data-goatcounter-click="division-open-delete-linkedin-dialog"
+                          data-goatcounter-title="Open delete LinkedIn post confirmation"
+                        >
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete LinkedIn Post</AlertDialogTitle>
@@ -1580,7 +1740,13 @@ function LinkedInManager() {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => deleteMutation.mutate(post.id)}>Delete</AlertDialogAction>
+                          <AlertDialogAction
+                            onClick={() => deleteMutation.mutate(post.id)}
+                            data-goatcounter-click="division-delete-linkedin-post"
+                            data-goatcounter-title="Confirm delete LinkedIn post"
+                          >
+                            Delete
+                          </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -1626,7 +1792,13 @@ function LinkedInManager() {
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => { setIsCreateDialogOpen(false); setEditingPost(null); resetForm(); }}>Cancel</Button>
-              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending} data-testid="button-save-linkedin">
+              <Button
+                type="submit"
+                disabled={createMutation.isPending || updateMutation.isPending}
+                data-testid="button-save-linkedin"
+                data-goatcounter-click={`division-${editingPost ? 'update' : 'save'}-linkedin-post`}
+                data-goatcounter-title={editingPost ? "Update LinkedIn post" : "Save LinkedIn post"}
+              >
                 {(createMutation.isPending || updateMutation.isPending) && <RefreshCw className="w-4 h-4 mr-2 animate-spin" />}
                 {editingPost ? "Update Post" : "Sync Post"}
               </Button>

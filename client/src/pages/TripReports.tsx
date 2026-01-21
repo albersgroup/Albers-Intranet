@@ -610,11 +610,13 @@ export default function TripReports() {
                 className="hidden"
                 data-testid="input-plaud-doc"
               />
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => docInputRef.current?.click()}
                 disabled={isUploadingDoc}
                 data-testid="button-upload-plaud"
+                data-goatcounter-click="trip-upload-pdf"
+                data-goatcounter-title="Upload PDF trip report"
               >
                 {isUploadingDoc ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -623,7 +625,12 @@ export default function TripReports() {
                 )}
                 {isUploadingDoc ? "Uploading..." : "Upload PDF"}
               </Button>
-              <Button onClick={() => setActiveTab("submit")} data-testid="button-new-report">
+              <Button
+                onClick={() => setActiveTab("submit")}
+                data-testid="button-new-report"
+                data-goatcounter-click="trip-new-report"
+                data-goatcounter-title="Create new trip report"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 New Report
               </Button>
@@ -823,20 +830,24 @@ export default function TripReports() {
                             </p>
                             <div className="flex gap-2">
                               {report.sourceType !== 'document' && (
-                                <Button 
-                                  variant="outline" 
+                                <Button
+                                  variant="outline"
                                   size="sm"
                                   onClick={(e) => { e.stopPropagation(); handleEditReport(report); }}
                                   data-testid={`button-edit-report-${report.id}`}
+                                  data-goatcounter-click="trip-edit-report"
+                                  data-goatcounter-title="Edit trip report"
                                 >
                                   <Pencil className="w-3 h-3 mr-1" /> Edit
                                 </Button>
                               )}
-                              <Button 
-                                variant="outline" 
+                              <Button
+                                variant="outline"
                                 size="sm"
                                 onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(report.id); }}
                                 data-testid={`button-delete-report-${report.id}`}
+                                data-goatcounter-click="trip-delete-report"
+                                data-goatcounter-title="Delete trip report"
                               >
                                 <Trash2 className="w-3 h-3 mr-1" /> Delete
                               </Button>
@@ -866,7 +877,12 @@ export default function TripReports() {
                       ? "No reports match your search criteria." 
                       : "Be the first to submit a trip report!"}
                   </p>
-                  <Button onClick={() => setActiveTab("submit")} data-testid="button-submit-first-report">
+                  <Button
+                    onClick={() => setActiveTab("submit")}
+                    data-testid="button-submit-first-report"
+                    data-goatcounter-click="trip-submit-first"
+                    data-goatcounter-title="Submit first trip report"
+                  >
                     <Plus className="w-4 h-4 mr-2" />
                     Submit Report
                   </Button>

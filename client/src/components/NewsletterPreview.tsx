@@ -165,11 +165,13 @@ export default function NewsletterPreview({ division }: NewsletterPreviewProps) 
           
           {/* Read More button */}
           <CardContent className="pt-0 pb-4 -mt-8 relative z-10">
-            <Button 
+            <Button
               onClick={handleReadMore}
               variant="outline"
               className="w-full gap-2"
               data-testid="button-read-more"
+              data-goatcounter-click="division-newsletter-read-more"
+              data-goatcounter-title="Newsletter Read More"
             >
               <Newspaper className="w-4 h-4" />
               Read More...
@@ -184,17 +186,25 @@ export default function NewsletterPreview({ division }: NewsletterPreviewProps) 
             <PDFViewer url={newsletter.file_url} />
           </CardContent>
           <CardContent className="pt-4 pb-4 flex gap-2">
-            <Button 
+            <Button
               onClick={() => setIsExpanded(false)}
               variant="outline"
               className="flex-1 gap-2"
               data-testid="button-collapse-newsletter"
+              data-goatcounter-click="division-newsletter-collapse"
+              data-goatcounter-title="Newsletter Collapse"
             >
               <ChevronUp className="w-4 h-4" />
               Collapse Newsletter
             </Button>
             <a href={newsletter.file_url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0">
-              <Button variant="outline" className="gap-2" data-testid="button-download-pdf">
+              <Button
+                variant="outline"
+                className="gap-2"
+                data-testid="button-download-pdf"
+                data-goatcounter-click="division-newsletter-download"
+                data-goatcounter-title="Newsletter Download PDF"
+              >
                 <ExternalLink className="w-4 h-4" />
                 Download PDF
               </Button>

@@ -372,10 +372,12 @@ export default function SOPLibrary() {
           <Collapsible open={isFlowchartOpen} onOpenChange={setIsFlowchartOpen}>
             <Card className="p-4">
               <CollapsibleTrigger asChild>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="w-full flex items-center justify-between p-4 hover-elevate"
                   data-testid="button-toggle-flowchart"
+                  data-goatcounter-click="bou-toggle-opportunity-lifecycle"
+                  data-goatcounter-title="Toggle Opportunity Lifecycle Visual"
                 >
                   <div className="flex items-center gap-2">
                     <FileText className="w-5 h-5" />
@@ -400,10 +402,12 @@ export default function SOPLibrary() {
           <Collapsible>
             <Card className="p-4">
               <CollapsibleTrigger asChild>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="w-full flex items-center justify-between p-4 hover-elevate"
                   data-testid="button-toggle-proposal-lifecycle"
+                  data-goatcounter-click="bou-toggle-proposal-lifecycle"
+                  data-goatcounter-title="Toggle Proposal Lifecycle Visual"
                 >
                   <div className="flex items-center gap-2">
                     <FileText className="w-5 h-5 text-primary" />
@@ -468,6 +472,8 @@ export default function SOPLibrary() {
                       variant="ghost"
                       className="w-full flex items-center justify-between p-4 hover-elevate"
                       data-testid={`button-toggle-${category.title.toLowerCase().replace(/\s+/g, '-')}`}
+                      data-goatcounter-click={`bou-toggle-sop-category-${category.title.toLowerCase().replace(/\s+/g, '-')}`}
+                      data-goatcounter-title={`Toggle SOP Category: ${category.title}`}
                     >
                       <div className="flex items-center gap-2">
                         <h2 className="text-lg font-bold">{category.title}</h2>

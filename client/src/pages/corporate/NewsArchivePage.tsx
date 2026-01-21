@@ -137,6 +137,8 @@ export default function NewsArchivePage() {
                         className="hover-elevate cursor-pointer"
                         onClick={() => setSelectedArticle(article)}
                         data-testid={`card-archive-article-${article.id}`}
+                        data-goatcounter-click={`division-news-view-article-${article.id}`}
+                        data-goatcounter-title={`View News Article: ${article.title}`}
                       >
                         <CardContent className="p-3">
                           <div className="flex items-start gap-1.5 mb-1">
@@ -202,6 +204,8 @@ export default function NewsArchivePage() {
                     onClick={() => window.open(selectedArticle.attachmentUrl!, '_blank', 'noopener,noreferrer')}
                     className="gap-2"
                     data-testid="button-view-archive-attachment"
+                    data-goatcounter-click={`division-news-view-attachment-${selectedArticle.id}`}
+                    data-goatcounter-title="View News Attachment"
                   >
                     <ExternalLink className="w-4 h-4" />
                     View Attachment: {selectedArticle.attachmentName || 'Document'}

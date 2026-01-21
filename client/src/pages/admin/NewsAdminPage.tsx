@@ -317,6 +317,8 @@ export default function NewsAdminPage() {
             variant={showArchived ? "default" : "outline"}
             onClick={() => setShowArchived(!showArchived)}
             data-testid="button-toggle-archived"
+            data-goatcounter-click="admin-toggle-archived-bulletins"
+            data-goatcounter-title="Toggle archived bulletins visibility"
           >
             <Archive className="w-4 h-4 mr-2" />
             {showArchived ? "Showing All" : "Show Archived"}
@@ -324,7 +326,11 @@ export default function NewsAdminPage() {
           
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button data-testid="button-create-bulletin">
+              <Button
+                data-testid="button-create-bulletin"
+                data-goatcounter-click="admin-create-bulletin"
+                data-goatcounter-title="Open create bulletin dialog"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Create Bulletin
               </Button>
@@ -399,6 +405,8 @@ export default function NewsAdminPage() {
                         variant="ghost"
                         onClick={removeAttachment}
                         data-testid="button-remove-attachment"
+                        data-goatcounter-click="admin-remove-bulletin-attachment"
+                        data-goatcounter-title="Remove bulletin attachment"
                       >
                         <X className="w-4 h-4" />
                       </Button>
@@ -422,6 +430,8 @@ export default function NewsAdminPage() {
                         onClick={() => fileInputRef.current?.click()}
                         disabled={isUploading}
                         data-testid="button-upload-file"
+                        data-goatcounter-click="admin-upload-bulletin-attachment"
+                        data-goatcounter-title="Upload bulletin attachment"
                       >
                         <Upload className="w-4 h-4 mr-2" />
                         {isUploading ? "Uploading..." : "Upload PDF or Image"}
@@ -435,7 +445,13 @@ export default function NewsAdminPage() {
                   <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={createMutation.isPending || isUploading} data-testid="button-submit-create">
+                  <Button
+                    type="submit"
+                    disabled={createMutation.isPending || isUploading}
+                    data-testid="button-submit-create"
+                    data-goatcounter-click="admin-submit-create-bulletin"
+                    data-goatcounter-title="Submit new bulletin"
+                  >
                     {createMutation.isPending ? "Creating..." : "Create Bulletin"}
                   </Button>
                 </div>
@@ -499,6 +515,8 @@ export default function NewsAdminPage() {
                       onClick={() => pinMutation.mutate(article.id)}
                       data-testid={`button-pin-${article.id}`}
                       title={(article.is_pinned || article.isPinned) ? "Unpin from top" : "Pin to top"}
+                      data-goatcounter-click={`admin-${(article.is_pinned || article.isPinned) ? 'unpin' : 'pin'}-bulletin`}
+                      data-goatcounter-title={(article.is_pinned || article.isPinned) ? "Unpin bulletin" : "Pin bulletin to top"}
                     >
                       {(article.is_pinned || article.isPinned) ? <PinOff className="w-4 h-4 text-primary" /> : <Pin className="w-4 h-4" />}
                     </Button>
@@ -508,6 +526,8 @@ export default function NewsAdminPage() {
                       variant="ghost"
                       onClick={() => handleEdit(article)}
                       data-testid={`button-edit-${article.id}`}
+                      data-goatcounter-click="admin-edit-bulletin"
+                      data-goatcounter-title="Open edit bulletin dialog"
                     >
                       <Pencil className="w-4 h-4" />
                     </Button>
@@ -517,13 +537,21 @@ export default function NewsAdminPage() {
                       variant="ghost"
                       onClick={() => archiveMutation.mutate({ id: article.id, isArchived: !article.is_archived })}
                       data-testid={`button-archive-${article.id}`}
+                      data-goatcounter-click={`admin-${article.is_archived ? 'unarchive' : 'archive'}-bulletin`}
+                      data-goatcounter-title={article.is_archived ? "Unarchive bulletin" : "Archive bulletin"}
                     >
                       {article.is_archived ? <ArchiveX className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
                     </Button>
                     
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button size="icon" variant="ghost" data-testid={`button-delete-${article.id}`}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          data-testid={`button-delete-${article.id}`}
+                          data-goatcounter-click="admin-open-delete-bulletin-dialog"
+                          data-goatcounter-title="Open delete bulletin confirmation"
+                        >
                           <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </AlertDialogTrigger>
@@ -539,6 +567,8 @@ export default function NewsAdminPage() {
                           <AlertDialogAction
                             onClick={() => deleteMutation.mutate(article.id)}
                             className="bg-destructive hover:bg-destructive/90"
+                            data-goatcounter-click="admin-delete-bulletin"
+                            data-goatcounter-title="Confirm delete bulletin"
                           >
                             Delete
                           </AlertDialogAction>
@@ -557,6 +587,8 @@ export default function NewsAdminPage() {
                       size="sm"
                       onClick={() => window.open(article.attachment_url!, '_blank', 'noopener,noreferrer')}
                       data-testid={`button-view-attachment-${article.id}`}
+                      data-goatcounter-click="admin-view-bulletin-attachment"
+                      data-goatcounter-title="View bulletin attachment"
                     >
                       <ExternalLink className="w-3 h-3 mr-2" />
                       View {article.attachment_name || 'Attachment'}
@@ -662,6 +694,8 @@ export default function NewsAdminPage() {
                     onClick={() => editFileInputRef.current?.click()}
                     disabled={isUploading}
                     data-testid="button-edit-upload-file"
+                    data-goatcounter-click="admin-upload-edit-bulletin-attachment"
+                    data-goatcounter-title="Upload attachment for edited bulletin"
                   >
                     <Upload className="w-4 h-4 mr-2" />
                     {isUploading ? "Uploading..." : "Upload PDF or Image"}
@@ -675,7 +709,13 @@ export default function NewsAdminPage() {
               <Button type="button" variant="outline" onClick={() => setEditingArticle(null)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={updateMutation.isPending || isUploading} data-testid="button-submit-edit">
+              <Button
+                type="submit"
+                disabled={updateMutation.isPending || isUploading}
+                data-testid="button-submit-edit"
+                data-goatcounter-click="admin-update-bulletin"
+                data-goatcounter-title="Update bulletin"
+              >
                 {updateMutation.isPending ? "Saving..." : "Save Changes"}
               </Button>
             </div>

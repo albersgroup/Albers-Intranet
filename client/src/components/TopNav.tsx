@@ -205,13 +205,17 @@ export default function TopNav({ activeTab, onTabChange, userEmail }: TopNavProp
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           <span className="text-xs sm:text-sm text-muted-foreground hidden lg:inline truncate max-w-[150px]">{userEmail || user?.email}</span>
           <ThemeToggle />
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleLogout}
-            className="text-xs sm:text-sm text-muted-foreground hover:text-foreground whitespace-nowrap"
+            className="text-xs sm:text-sm text-muted-foreground hover:text-foreground whitespace-nowrap h-auto p-0"
             data-testid="button-logout"
+            data-goatcounter-click="auth-logout"
+            data-goatcounter-title="User logout action"
           >
             Logout
-          </button>
+          </Button>
         </div>
       </div>
       

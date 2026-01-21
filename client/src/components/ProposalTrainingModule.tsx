@@ -272,6 +272,8 @@ export default function ProposalTrainingModule() {
                       onClick={goToPreviousSlide}
                       disabled={currentSlide === 0}
                       data-testid="button-previous-slide"
+                      data-goatcounter-click="bou-training-previous-slide"
+                      data-goatcounter-title="Training Previous Slide"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </Button>
@@ -281,6 +283,8 @@ export default function ProposalTrainingModule() {
                       onClick={goToNextSlide}
                       disabled={currentSlide === slides.length - 1}
                       data-testid="button-next-slide"
+                      data-goatcounter-click="bou-training-next-slide"
+                      data-goatcounter-title="Training Next Slide"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </Button>
@@ -337,6 +341,8 @@ export default function ProposalTrainingModule() {
                       : "border-border"
                   )}
                   data-testid={`button-slide-${index + 1}`}
+                  data-goatcounter-click={`bou-training-jump-to-slide-${index + 1}`}
+                  data-goatcounter-title={`Training Jump to Slide ${index + 1}`}
                 >
                   <div className="aspect-video bg-muted relative overflow-hidden">
                     {slide.fileType === "image" && (
@@ -394,6 +400,8 @@ export default function ProposalTrainingModule() {
                       role="button"
                       tabIndex={0}
                       onKeyDown={(e) => e.key === 'Enter' && openAnalytics(slide.id, e as any)}
+                      data-goatcounter-click={`bou-training-view-analytics-${slide.id}`}
+                      data-goatcounter-title="Training View Analytics"
                     >
                       <BarChart3 className="w-3.5 h-3.5 text-foreground" />
                     </div>

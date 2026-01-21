@@ -191,6 +191,8 @@ export default function ResetPassword() {
                     onClick={() => setLocation("/login")}
                     className="w-full"
                     data-testid="button-go-to-login"
+                    data-goatcounter-click="auth-reset-password-go-to-login"
+                    data-goatcounter-title="Navigate to login after successful password reset"
                   >
                     Go to Login
                   </Button>
@@ -238,11 +240,13 @@ export default function ResetPassword() {
                       )}
                     />
 
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       className="w-full"
                       disabled={isLoading}
                       data-testid="button-reset-password"
+                      data-goatcounter-click="auth-reset-password-submit"
+                      data-goatcounter-title="Submit new password for account reset"
                     >
                       {isLoading ? (
                         <>

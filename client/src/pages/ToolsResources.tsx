@@ -371,10 +371,12 @@ export default function ToolsResources() {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button 
-            size="sm" 
+          <Button
+            size="sm"
             className={`flex-1 ${category.color} text-white hover:opacity-90`}
             data-testid={`button-download-${resource.id}`}
+            data-goatcounter-click="tools-download-resource"
+            data-goatcounter-title="Download resource file"
           >
             <Download className="w-4 h-4 mr-2" />
             Download
@@ -385,6 +387,8 @@ export default function ToolsResources() {
             className="toggle-elevate"
             onClick={() => toggleFavorite(resource.id)}
             data-testid={`button-favorite-${resource.id}`}
+            data-goatcounter-click="tools-favorite-resource"
+            data-goatcounter-title="Toggle resource favorite status"
           >
             <Star className={`w-4 h-4 ${favorites.has(resource.id) ? "fill-amber-500 text-amber-500" : ""}`} />
           </Button>
@@ -393,6 +397,8 @@ export default function ToolsResources() {
             variant="ghost"
             onClick={() => handleShare(resource)}
             data-testid={`button-share-${resource.id}`}
+            data-goatcounter-click="tools-share-resource"
+            data-goatcounter-title="Copy resource link to clipboard"
           >
             <Share2 className="w-4 h-4" />
           </Button>

@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { usePageTracking } from "@/hooks/use-analytics";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
 import FloatingChatbot from "@/components/FloatingChatbot";
@@ -219,7 +220,18 @@ function ProtectedLayout() {
   return <ProtectedRoute component={MainLayout} />;
 }
 
+function PublicHome() {
+  return (
+    <div className="min-h-screen bg-background">
+      <CorporateHome />
+    </div>
+  );
+}
+
 function Router() {
+  // Track page views with Goatcounter
+  usePageTracking();
+
   return (
     <Switch>
       <Route path="/login" component={Login} />
@@ -227,6 +239,8 @@ function Router() {
       <Route path="/verify-email" component={VerifyEmail} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />
+      {/* Public homepage - no authentication required */}
+      <Route path="/" component={PublicHome} />
       <Route component={ProtectedLayout} />
     </Switch>
   );

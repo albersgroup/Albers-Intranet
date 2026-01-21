@@ -264,7 +264,11 @@ function LayoutTab() {
             </div>
           ))}
         </div>
-        <Button onClick={() => toast({ title: "Layout saved", description: "Page layout has been updated" })}>
+        <Button
+          onClick={() => toast({ title: "Layout saved", description: "Page layout has been updated" })}
+          data-goatcounter-click="admin-save-bd-layout"
+          data-goatcounter-title="Save BD layout changes"
+        >
           <Save className="w-4 h-4 mr-2" />
           Save Layout
         </Button>
@@ -490,7 +494,11 @@ function QuickLinksTab() {
             <Button variant="outline" onClick={() => { setShowAddDialog(false); setEditingLink(null); }}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
+            <Button
+              onClick={handleSave}
+              data-goatcounter-click="admin-save-bd-quick-link"
+              data-goatcounter-title="Save BD quick link"
+            >
               <Save className="w-4 h-4 mr-2" />
               Save
             </Button>
@@ -597,7 +605,11 @@ function NewsTab() {
             <Button variant="outline" onClick={() => setShowAddDialog(false)}>
               Cancel
             </Button>
-            <Button onClick={() => { toast({ title: "Article saved" }); setShowAddDialog(false); }}>
+            <Button
+              onClick={() => { toast({ title: "Article saved" }); setShowAddDialog(false); }}
+              data-goatcounter-click="admin-publish-bd-news-article"
+              data-goatcounter-title="Publish BD news article"
+            >
               <Save className="w-4 h-4 mr-2" />
               Publish
             </Button>
@@ -677,7 +689,11 @@ function IDIQSettingsTab() {
           />
         </div>
 
-        <Button onClick={() => toast({ title: "Settings saved", description: "IDIQ settings have been updated" })}>
+        <Button
+          onClick={() => toast({ title: "Settings saved", description: "IDIQ settings have been updated" })}
+          data-goatcounter-click="admin-save-idiq-settings"
+          data-goatcounter-title="Save IDIQ settings"
+        >
           <Save className="w-4 h-4 mr-2" />
           Save Settings
         </Button>

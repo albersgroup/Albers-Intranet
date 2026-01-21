@@ -162,6 +162,8 @@ export default function FloatingChatbot({
             onClick={() => setIsOpen(true)}
             className="bg-primary text-primary-foreground shadow-lg border-0"
             data-testid="button-open-chatbot"
+            data-goatcounter-click="chatbot-open"
+            data-goatcounter-title="Open Floating Chatbot"
           >
             <div className="flex items-center gap-3">
               <div className="relative" data-testid="avatar-albers-bot">
@@ -222,6 +224,8 @@ export default function FloatingChatbot({
                 className="text-primary-foreground"
                 onClick={() => setIsOpen(false)}
                 data-testid="button-minimize-chatbot"
+                data-goatcounter-click="chatbot-minimize"
+                data-goatcounter-title="Minimize Chatbot"
               >
                 <Minimize2 className="w-4 h-4" />
               </Button>
@@ -231,6 +235,8 @@ export default function FloatingChatbot({
                 className="text-primary-foreground"
                 onClick={() => setIsOpen(false)}
                 data-testid="button-close-chatbot"
+                data-goatcounter-click="chatbot-close"
+                data-goatcounter-title="Close Chatbot"
               >
                 <X className="w-4 h-4" />
               </Button>

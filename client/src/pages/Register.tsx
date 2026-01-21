@@ -213,6 +213,8 @@ export default function Register() {
                   className="w-full"
                   disabled={isLoading}
                   data-testid="button-register"
+                  data-goatcounter-click="auth-register-submit"
+                  data-goatcounter-title="New user account creation"
                 >
                   {isLoading ? (
                     <>

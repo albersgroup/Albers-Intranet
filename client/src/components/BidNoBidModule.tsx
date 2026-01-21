@@ -306,6 +306,8 @@ export default function BidNoBidModule() {
                 variant="outline"
                 data-testid="button-clear-draft-bidnobid"
                 className="gap-2 flex-1 sm:flex-none"
+                data-goatcounter-click="bou-bidnobid-clear-draft"
+                data-goatcounter-title="Bid/No-Bid Clear Draft"
               >
                 <Trash2 className="h-4 w-4" />
                 Clear Draft
@@ -314,6 +316,8 @@ export default function BidNoBidModule() {
                 onClick={handleDownload}
                 data-testid="button-download-chart"
                 className="gap-2 flex-1 sm:flex-none"
+                data-goatcounter-click="bou-bidnobid-download"
+                data-goatcounter-title="Bid/No-Bid Download Chart"
               >
                 <Download className="h-4 w-4" />
                 Download Chart
