@@ -17,10 +17,40 @@ const FROM_EMAIL = process.env.SMTP_FROM || process.env.SMTP_USER || 'noreply@al
 // Create transporter
 function createTransporter(): Transporter {
   if (!SMTP_CONFIG.auth.user || !SMTP_CONFIG.auth.pass) {
-    throw new Error('SMTP credentials not configured. Set SMTP_USER and SMTP_PASS environment variables.');
+    console.warn('SMTP credentials not configured. Emails will not be sent. Set SMTP_USER and SMTP_PASS environment variables.');
+    // Return a mock transporter for development
+    return nodemailer.createTransport({
+      streamTransport: true,
+      newline: 'unix',
+      buffer: true
+    }) as any;
   }
 
   return nodemailer.createTransport(SMTP_CONFIG);
+}
+
+// Generic email sending function
+export async function sendEmail(options: {
+  to: string | string[];
+  subject: string;
+  html: string;
+}) {
+  try {
+    const transporter = createTransporter();
+
+    const info = await transporter.sendMail({
+      from: FROM_EMAIL,
+      to: Array.isArray(options.to) ? options.to : [options.to],
+      subject: options.subject,
+      html: options.html,
+    });
+
+    console.log('Email sent:', info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('Failed to send email:', error);
+    throw error;
+  }
 }
 
 export async function sendVerificationEmail(to: string, code: string) {

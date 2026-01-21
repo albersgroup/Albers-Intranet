@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import pkg from "pg";
 const { Pool } = pkg;
 import type { Request, Response, NextFunction } from "express";
-import { sendVerificationEmail, sendPasswordResetEmail } from "./resend-client";
+import { sendVerificationEmail, sendPasswordResetEmail } from "./smtp-client";
 import crypto from "crypto";
 
 if (!process.env.DATABASE_URL) {
@@ -93,19 +93,34 @@ export async function createUser(email: string, password: string, firstName?: st
     const hashedPassword = await hashPassword(password);
     const verificationCode = generateVerificationCode();
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
-    
+
+    // Check if SMTP is configured
+    const smtpConfigured = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
+
+    // Auto-verify email if SMTP is not configured (for local development)
+    const emailVerified = !smtpConfigured;
+
     const result = await pool.query(
-      `INSERT INTO users (email, password, first_name, last_name, verification_code, verification_code_expires_at, email_verified, business_vertical) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+      `INSERT INTO users (email, password, first_name, last_name, verification_code, verification_code_expires_at, email_verified, business_vertical)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING id, email, email_verified, first_name, last_name, business_vertical`,
-      [email, hashedPassword, firstName || null, lastName || null, verificationCode, expiresAt, false, businessVertical || null]
+      [email, hashedPassword, firstName || null, lastName || null, verificationCode, expiresAt, emailVerified, businessVertical || null]
     );
-    
+
     const user = result.rows[0];
-    
-    // Send verification email
-    await sendVerificationEmail(email, verificationCode);
-    
+
+    // Send verification email only if SMTP is configured
+    if (smtpConfigured) {
+      try {
+        await sendVerificationEmail(email, verificationCode);
+      } catch (error) {
+        console.error("Failed to send verification email:", error);
+        // Don't fail user creation if email fails
+      }
+    } else {
+      console.log(`⚠️  SMTP not configured. User ${email} auto-verified. Verification code: ${verificationCode}`);
+    }
+
     return user;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -196,10 +211,22 @@ export async function requestPasswordReset(email: string, baseUrl: string) {
     
     // Generate reset link
     const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
-    
-    // Send password reset email
-    await sendPasswordResetEmail(user.email, resetLink);
-    
+
+    // Check if SMTP is configured
+    const smtpConfigured = !!(process.env.SMTP_USER && process.env.SMTP_PASS);
+
+    // Send password reset email only if SMTP is configured
+    if (smtpConfigured) {
+      try {
+        await sendPasswordResetEmail(user.email, resetLink);
+      } catch (error) {
+        console.error("Failed to send password reset email:", error);
+        // Don't fail the request if email fails
+      }
+    } else {
+      console.log(`⚠️  SMTP not configured. Password reset link for ${user.email}: ${resetLink}`);
+    }
+
     return { success: true, message: "If an account exists, a reset link will be sent" };
   } catch (error) {
     console.error("Error requesting password reset:", error);

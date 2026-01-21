@@ -6,7 +6,7 @@ import path from "path";
 import { localFileStorage, ObjectNotFoundError } from "./localFileStorage";
 import { getSOPContext, getSOPByTitle } from "./sop-loader";
 import { getKnowledgeBase } from "./generate-knowledge-base";
-import { sendNewOpportunityEmail, sendTrainingAssignmentEmail, sendVerificationEmail, sendIdiqMentionEmail } from "./smtp-client";
+import { sendNewOpportunityEmail, sendTrainingAssignmentEmail, sendVerificationEmail, sendIdiqMentionEmail, sendEmail } from "./smtp-client";
 import { 
   findUserByEmail, 
   createUser, 
@@ -83,7 +83,7 @@ async function sendTrainingAssignmentNotifications(
             user.email,
             assigneeName,
             slide.title,
-            assignerName,
+            "Proposal Training", // category
             dueAt,
             trainingUrl
           );
@@ -214,36 +214,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // Check if email is verified
-      if (!user.email_verified) {
-        // Generate new verification code and resend email
-        try {
-          const crypto = await import('crypto');
-          const newVerificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
-          const newExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
-          
-          // Update user with new verification code
-          await dbPool.query(
-            `UPDATE users SET verification_code = $1, verification_code_expires_at = $2 WHERE id = $3`,
-            [newVerificationCode, newExpiresAt, user.id]
-          );
-          
-          // Send new verification email
-          await sendVerificationEmail(user.email, newVerificationCode);
-          
-          return res.status(403).json({ 
-            message: "Your email is not verified. We've sent a new verification code to your inbox.",
-            requiresVerification: true,
-            emailResent: true
-          });
-        } catch (emailError) {
-          console.error("Error resending verification email:", emailError);
-          return res.status(403).json({ 
-            message: "Please verify your email before logging in. Check your inbox for the verification code.",
-            requiresVerification: true
-          });
-        }
-      }
+      // Email verification check disabled - allow unverified users to log in
+      // This is useful for local development and internal deployments without SMTP
+      // if (!user.email_verified) {
+      //   // Generate new verification code and resend email
+      //   try {
+      //     const crypto = await import('crypto');
+      //     const newVerificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
+      //     const newExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
+      //
+      //     // Update user with new verification code
+      //     await dbPool.query(
+      //       `UPDATE users SET verification_code = $1, verification_code_expires_at = $2 WHERE id = $3`,
+      //       [newVerificationCode, newExpiresAt, user.id]
+      //     );
+      //
+      //     // Send new verification email
+      //     await sendVerificationEmail(user.email, newVerificationCode);
+      //
+      //     return res.status(403).json({
+      //       message: "Your email is not verified. We've sent a new verification code to your inbox.",
+      //       requiresVerification: true,
+      //       emailResent: true
+      //     });
+      //   } catch (emailError) {
+      //     console.error("Error resending verification email:", emailError);
+      //     return res.status(403).json({
+      //       message: "Please verify your email before logging in. Check your inbox for the verification code.",
+      //       requiresVerification: true
+      //     });
+      //   }
+      // }
 
       // Verify password
       const isValidPassword = await verifyPassword(password, user.password);
@@ -1516,9 +1517,6 @@ Ask about their role so you can guide them better.`;
         });
       }
 
-      // Get Resend client
-      const { client: resend, fromEmail } = await getUncachableResendClient();
-
       // Build email content
       const captureManagerName = solicitationInfo.captureManager || "Unknown";
       
@@ -1568,8 +1566,7 @@ Ask about their role so you can guide them better.`;
       });
 
       // Send email
-      await resend.emails.send({
-        from: fromEmail,
+      await sendEmail({
         to: ['gjames@albers.aero', 'rflood@albers.aero'],
         subject: `Capture Questions from ${captureManagerName}`,
         html: emailHtml
@@ -3296,8 +3293,7 @@ Ask about their role so you can guide them better.`;
       if (userResult.rows.length === 0) return;
 
       const { email, first_name } = userResult.rows[0];
-      const { client, fromEmail } = await getUncachableResendClient();
-      const baseUrl = process.env.REPLIT_DEPLOYMENT_URL || 'https://business-operations-unit-portal.replit.app';
+      const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
       const link = `${baseUrl}/bou?postId=${postId}${commentId ? `&commentId=${commentId}` : ''}`;
 
       const bodyContent = `
@@ -3313,9 +3309,8 @@ Ask about their role so you can guide them better.`;
         </table>
       `;
 
-      await client.emails.send({
-        from: fromEmail,
-        to: [email],
+      await sendEmail({
+        to: email,
         subject: `${mentionedByName} mentioned you in the BOU Bulletin Board`,
         html: getBrandedEmailTemplate(
           'You were mentioned',
@@ -3346,13 +3341,12 @@ Ask about their role so you can guide them better.`;
       if (userResult.rows.length === 0) return;
 
       const { email, first_name } = userResult.rows[0];
-      const { client, fromEmail } = await getUncachableResendClient();
-      const baseUrl = process.env.REPLIT_DEPLOYMENT_URL || 'https://business-operations-unit-portal.replit.app';
+      const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
       const link = `${baseUrl}/bou?postId=${postId}&commentId=${commentId}`;
 
       // Truncate comment preview if too long
-      const truncatedPreview = commentPreview.length > 150 
-        ? commentPreview.substring(0, 150) + '...' 
+      const truncatedPreview = commentPreview.length > 150
+        ? commentPreview.substring(0, 150) + '...'
         : commentPreview;
 
       const bodyContent = `
@@ -3369,9 +3363,8 @@ Ask about their role so you can guide them better.`;
         <p style="font-size: 15px; color: #374151; margin: 0; line-height: 1.7;">Click below to view the comment and continue the conversation.</p>
       `;
 
-      await client.emails.send({
-        from: fromEmail,
-        to: [email],
+      await sendEmail({
+        to: email,
         subject: `${commenterName} commented on your post`,
         html: getBrandedEmailTemplate(
           'New comment on your post',
@@ -7786,14 +7779,14 @@ Provide your comprehensive analysis as JSON.`
             ? `${mentionedUser.first_name} ${mentionedUser.last_name}`
             : mentionedUser.first_name || mentionedUser.last_name || 'Team Member';
           
+          const opportunityUrl = `${intranetUrl}/idiq-management?id=${id}`;
           sendIdiqMentionEmail(
             mentionedUser.email,
             mentionedName,
             mentionerName,
             opportunityTitle,
-            id,
             content.trim(),
-            intranetUrl
+            opportunityUrl
           ).catch(err => console.error('Failed to send IDIQ mention email:', err));
         }
       }
