@@ -43,15 +43,12 @@ const navigationItems: SearchResult[] = [
   { id: "home", title: "Home", description: "Corporate home page", url: "/", icon: Home, category: "Navigation", keywords: ["main", "dashboard", "start"] },
   { id: "news-archive", title: "All News Bulletins", description: "Browse all news articles", url: "/news-archive", icon: Archive, category: "Navigation", keywords: ["articles", "updates", "announcements", "bulletin", "archive", "archived", "all", "news"] },
   { id: "sops", title: "SOPs & Processes", description: "Standard Operating Procedures library", url: "/sops", icon: BookOpen, category: "Navigation", keywords: ["procedures", "documents", "policies", "guides"] },
-  { id: "albers-bot", title: "Albers Bot", description: "AI assistant for help and guidance", url: "/albers-bot", icon: Bot, category: "Navigation", keywords: ["ai", "help", "assistant", "chat"] },
-  
+
   { id: "new-opportunity", title: "New Opportunity Form", description: "Submit a new business opportunity", url: "/new-opportunity", icon: FilePlus2, category: "Business Development", keywords: ["opportunity", "form", "submit", "crm"] },
   { id: "bid-no-bid", title: "Bid / No-Bid", description: "Opportunity evaluation tool", url: "/bid-no-bid", icon: ClipboardCheck, category: "Business Development", keywords: ["decision", "evaluate", "bid"] },
   { id: "capture-questions", title: "Capture Questions", description: "42 questions for opportunity preparation", url: "/capture-questions", icon: FileText, category: "Business Development", keywords: ["questions", "capture", "preparation"] },
   { id: "trip-reports", title: "Trip Reports", description: "Post-event forms for conferences and business travel", url: "/trip-reports", icon: FileText, category: "Business Development", keywords: ["trip", "travel", "event", "conference", "report", "post-event"] },
-  { id: "training", title: "Training", description: "Training materials and resources", url: "/training", icon: Presentation, category: "Business Development", keywords: ["training", "proposal", "writing", "learning"] },
-  
-  { id: "bi-reports", title: "Business Intelligence Tool", description: "Business Intelligence reports", externalUrl: "/api/easy-bi-reports", icon: BarChart3, category: "Business Tools", keywords: ["analytics", "reports", "data"] },
+
   { id: "govdash", title: "GovDash", description: "Government dashboard", externalUrl: "https://dashboard.govdash.com/login", icon: LayoutDashboard, category: "Business Tools", keywords: ["government", "dashboard"] },
   { id: "clickup", title: "ClickUp", description: "Project management", externalUrl: "https://app.clickup.com/login", icon: CheckSquare, category: "Business Tools", keywords: ["tasks", "projects", "management"] },
   { id: "salesforce", title: "Salesforce", description: "CRM platform", externalUrl: "https://albers.my.salesforce.com/", icon: ExternalLink, category: "Business Tools", keywords: ["crm", "sales", "customers"] },

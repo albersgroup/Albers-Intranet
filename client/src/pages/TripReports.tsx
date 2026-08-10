@@ -1,3 +1,4 @@
+import { sanitizeHtml } from "@/lib/sanitize";
 import { useState, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -745,7 +746,7 @@ export default function TripReports() {
                               {/* Legacy DOCX-based report - show HTML content */}
                               <div 
                                 className="prose prose-sm dark:prose-invert max-w-none p-4 bg-card border rounded-lg trip-report-content"
-                                dangerouslySetInnerHTML={{ __html: report.cleanedHtml }}
+                                dangerouslySetInnerHTML={sanitizeHtml(report.cleanedHtml)}
                               />
                               {report.originalFileUrl && (
                                 <a 

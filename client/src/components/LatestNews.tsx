@@ -1,3 +1,4 @@
+import { sanitizeHtml } from "@/lib/sanitize";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -132,7 +133,7 @@ export default function LatestNews({ division, limit = 3, showArchiveLink = true
                 </div>
                 <div 
                   className="bulletin-content text-sm mt-1 line-clamp-3"
-                  dangerouslySetInnerHTML={{ __html: article.content || article.summary || '' }}
+                  dangerouslySetInnerHTML={sanitizeHtml(article.content || article.summary || '')}
                 />
                 <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
                   <Calendar className="w-3 h-3" />
@@ -167,7 +168,7 @@ export default function LatestNews({ division, limit = 3, showArchiveLink = true
                 )}
                 <div 
                   className="bulletin-content max-w-none text-foreground"
-                  dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+                  dangerouslySetInnerHTML={sanitizeHtml(selectedArticle.content)}
                 />
                 {(selectedArticle as any).attachmentUrl && (
                   <div className="pt-4 border-t">

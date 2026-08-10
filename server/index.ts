@@ -5,7 +5,6 @@ import pkg from "pg";
 const { Pool } = pkg;
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { generateKnowledgeBase, scheduleKnowledgeBaseUpdates } from "./generate-knowledge-base";
 
 const app = express();
 
@@ -87,15 +86,6 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Generate knowledge base for Albers Bot on startup
-  try {
-    await generateKnowledgeBase();
-    // Schedule twice-daily automatic updates (6 AM and 6 PM)
-    scheduleKnowledgeBaseUpdates();
-  } catch (error) {
-    console.error("Failed to generate knowledge base:", error);
-  }
-
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

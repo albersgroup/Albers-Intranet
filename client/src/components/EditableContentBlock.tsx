@@ -1,3 +1,4 @@
+import { sanitizeHtml } from "@/lib/sanitize";
 import { useState, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -261,7 +262,7 @@ export default function EditableContentBlock({
               )}
               <div 
                 className="text-muted-foreground text-xs mb-3 prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: displayData.content }}
+                dangerouslySetInnerHTML={sanitizeHtml(displayData.content)}
               />
               {displayData.badges && displayData.badges.length > 0 && (
                 <div className="flex flex-wrap gap-1">

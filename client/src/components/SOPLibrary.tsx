@@ -1,3 +1,4 @@
+import { sanitizeHtml } from "@/lib/sanitize";
 import { useState, useEffect } from "react";
 import { useSearch } from "wouter";
 import { Input } from "@/components/ui/input";
@@ -533,7 +534,7 @@ export default function SOPLibrary() {
             ) : selectedSOP ? (
               <div 
                 className="sop-content prose prose-sm max-w-none dark:prose-invert"
-                dangerouslySetInnerHTML={{ __html: selectedSOP.content }}
+                dangerouslySetInnerHTML={sanitizeHtml(selectedSOP.content)}
               />
             ) : (
               <div className="text-center py-12 text-muted-foreground">

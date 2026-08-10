@@ -8,8 +8,6 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { usePageTracking } from "@/hooks/use-analytics";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
-import FloatingChatbot from "@/components/FloatingChatbot";
-import { FEATURES } from "@/config/features";
 
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
@@ -23,24 +21,19 @@ import DefenseHome from "@/pages/defense/DefenseHome";
 import IndustrialsHome from "@/pages/industrials/IndustrialsHome";
 import SpecialProjectsHome from "@/pages/special-projects/SpecialProjectsHome";
 import BOUHome from "@/pages/bou/BOUHome";
-import ProposalDashboard from "@/pages/bou/ProposalDashboard";
 import BusinessDevelopmentHome from "@/pages/BusinessDevelopmentHome";
 
 import SOPLibrary from "@/components/SOPLibrary";
-import ProposalTrainingModule from "@/components/ProposalTrainingModule";
 import BidNoBidModule from "@/components/BidNoBidModule";
 import CaptureQuestionsModule from "@/components/CaptureQuestionsModule";
 import NewOpportunityForm from "@/components/NewOpportunityForm";
-import AlbersBotPage from "@/components/AlbersBotPage";
 
 import ControlPanel from "@/pages/admin/ControlPanel";
 import DivisionAdminPage from "@/pages/admin/DivisionAdminPage";
-import BOUAdminPage from "@/pages/admin/BOUAdminPage";
 import BDAdminPage from "@/pages/admin/BDAdminPage";
 import NewsArchivePage from "@/pages/corporate/NewsArchivePage";
 import ToolsResources from "@/pages/ToolsResources";
 import TripReports from "@/pages/TripReports";
-import IdiqManagement from "@/pages/IdiqManagement";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -71,14 +64,6 @@ function SOPPage() {
   );
 }
 
-function ProposalTrainingPage() {
-  return (
-    <div className="p-6">
-      <ProposalTrainingModule />
-    </div>
-  );
-}
-
 function BidNoBidPage() {
   return (
     <div className="p-6 h-[calc(100vh-80px)]">
@@ -101,10 +86,6 @@ function NewOpportunityPage() {
       <NewOpportunityForm />
     </div>
   );
-}
-
-function AlbersBotFullPage() {
-  return <AlbersBotPage />;
 }
 
 function DefenseAdminPage() {
@@ -172,15 +153,11 @@ function MainLayout() {
                 <Route path="/" component={CorporateHome} />
                 <Route path="/sops" component={SOPPage} />
                 <Route path="/tools-resources" component={ToolsResources} />
-                <Route path="/training" component={ProposalTrainingPage} />
-                <Route path="/proposal-dashboard" component={ProposalDashboard} />
                 <Route path="/bid-no-bid" component={BidNoBidPage} />
                 <Route path="/capture-questions" component={CaptureQuestionsPage} />
                 <Route path="/new-opportunity" component={NewOpportunityPage} />
                 <Route path="/trip-reports" component={TripReports} />
                 <Route path="/business-development" component={BusinessDevelopmentHome} />
-                <Route path="/idiq-management" component={IdiqManagement} />
-                <Route path="/albers-bot" component={AlbersBotFullPage} />
                 <Route path="/news-archive" component={NewsArchivePage} />
                 
                 {/* Admin Pages */}
@@ -189,7 +166,6 @@ function MainLayout() {
                 <Route path="/admin/division/industrials" component={IndustrialsAdminPage} />
                 <Route path="/admin/division/advanced-programs" component={AdvancedProgramsAdminPage} />
                 <Route path="/admin/division/corporate" component={CorporateAdminPage} />
-                <Route path="/admin/bou" component={BOUAdminPage} />
                 <Route path="/admin/bd" component={BDAdminPage} />
                 
                 {/* Division Home Pages */}
@@ -202,13 +178,6 @@ function MainLayout() {
                 <Route component={NotFound} />
               </Switch>
             </main>
-            {FEATURES.ALBERS_BOT && (
-              <FloatingChatbot
-                pageContext="general"
-                currentData={{}}
-                pageName="Intranet"
-              />
-            )}
           </SidebarInset>
         </div>
       </SidebarProvider>

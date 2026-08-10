@@ -91,7 +91,6 @@ const divisions: DivisionConfig[] = [
         icon: FileText, 
         children: [
           { title: "BD Home", icon: Home, url: "/business-development" },
-          { title: "IDIQ Management", icon: Target, url: "/idiq-management" },
           { title: "Bid / No-Bid", icon: ClipboardCheck, url: "/bid-no-bid" },
           { title: "New Opportunity Form", icon: FilePlus2, url: "/new-opportunity" },
           { title: "Capture Questions", icon: FileText, url: "/capture-questions" },
@@ -103,9 +102,6 @@ const divisions: DivisionConfig[] = [
         icon: Presentation, 
         children: [
           { title: "BOU Home", icon: Home, url: "/bou" },
-          // Proposal Dashboard disabled (requires ClickUp integration)
-          ...(FEATURES.CLICKUP_INTEGRATION ? [{ title: "Proposal Dashboard", icon: LayoutDashboard, url: "/proposal-dashboard" }] : []),
-          { title: "Training", icon: Presentation, url: "/training" },
           // BI Tool SSO disabled for internal deployment
           ...(FEATURES.SSO_BI_TOOL ? [{ title: "Business Intelligence Tool", icon: BarChart3, externalUrl: "/api/sso/bi-reports" }] : []),
           { title: "GovDash", icon: LayoutDashboard, externalUrl: "https://dashboard.govdash.com/login" },
@@ -124,8 +120,6 @@ const divisions: DivisionConfig[] = [
           { title: "Healthcare Portal", icon: Heart, externalUrl: "https://www.anthem.com/" },
         ]
       },
-      // Albers Bot disabled for internal deployment (no OpenAI API)
-      ...(FEATURES.ALBERS_BOT ? [{ title: "Albers Bot", icon: Bot, url: "/albers-bot" }] : []),
     ]
   },
   {
@@ -360,17 +354,6 @@ export default function AppSidebar() {
                       <Link href="/admin" data-testid="nav-admin-control-panel">
                         <Users className="w-4 h-4" />
                         <span>System Control Panel</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
-                {/* System Admin and BOU Admin can manage BOU content */}
-                {canEditBouAdmin(user?.role) && (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/admin/bou")}>
-                      <Link href="/admin/bou" data-testid="nav-admin-bou">
-                        <Presentation className="w-4 h-4" />
-                        <span>BOU Control Panel</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

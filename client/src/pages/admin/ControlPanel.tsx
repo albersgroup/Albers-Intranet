@@ -35,7 +35,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Users, Search, Edit2, Loader2, ShieldCheck, ShieldX, BarChart3, UserCheck, UserX, Newspaper, Building2, Pin, Paperclip, Settings, TrendingUp, Trophy, Brain } from "lucide-react";
-import KnowledgeBaseAdmin from "@/components/admin/KnowledgeBaseAdmin";
 import { getRoleDisplayName } from "@/lib/permissions";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, LineChart, Line, CartesianGrid } from "recharts";
 import heroImage from "@assets/725708_1765410627983.jpg";
@@ -272,7 +271,7 @@ export default function ControlPanel() {
       <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
 
       <Tabs defaultValue="analytics" className="space-y-4">
-        <TabsList className="grid w-full md:w-auto grid-cols-3 bg-muted/40 p-1 h-11">
+        <TabsList className="grid w-full md:w-auto grid-cols-2 bg-muted/40 p-1 h-11">
           <TabsTrigger 
             value="analytics" 
             className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:text-muted-foreground transition-all" 
@@ -288,14 +287,6 @@ export default function ControlPanel() {
           >
             <Users className="w-4 h-4 hidden sm:inline" />
             Users
-          </TabsTrigger>
-          <TabsTrigger 
-            value="knowledge" 
-            className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:text-muted-foreground transition-all" 
-            data-testid="tab-knowledge"
-          >
-            <Brain className="w-4 h-4 hidden sm:inline" />
-            Knowledge
           </TabsTrigger>
         </TabsList>
 
@@ -803,10 +794,6 @@ export default function ControlPanel() {
           )}
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="knowledge" className="space-y-6">
-          <KnowledgeBaseAdmin />
         </TabsContent>
       </Tabs>
       </div>
