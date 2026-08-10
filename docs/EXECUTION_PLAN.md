@@ -168,6 +168,42 @@ cloned):
 5. **How will Albers Bot embed when it returns?** Iframe with signed handoff, shared
    session, or server-side API call. Design the seam deliberately.
 
-## Re-estimate
+## Decision Gate — reached
 
-_To be filled in at the Decision Gate from actual Phase 2 cost._
+Phases 0–2 are built, committed, and verified. What exists to evaluate:
+
+- **Stripped Node app** — `npm run check` and `npm run build` pass; the surviving
+  surface is the port spec.
+- **Rails 8 CMS in `rails/`** — the unified `content_items` / PaperTrail
+  `versions` / `media_assets` model; one **Avo** admin replacing the six React
+  admin pages; **Pundit** division scoping; **ActionText** rich text (sanitized
+  by default); **scheduled publishing** job; **pg_search**; **Entra ID OIDC**
+  with a dev-login bypass; ActiveStorage wired to Azure Blob (prod) / disk (dev).
+- **Server-rendered portals** driven entirely by the content model (`/` and
+  `/portal/:division`), seeded with representative content across every division
+  and content type.
+- **Verification** — 20 RSpec examples green (model lifecycle, PaperTrail
+  rollback, Pundit scoping, scheduled-publish job, portal rendering, admin
+  access), RuboCop clean, GitHub Actions CI defined; a live authenticated
+  walkthrough confirmed admin CRUD through Avo.
+
+**This is the off-ramp.** The Node app still runs; stopping here is viable. The
+evidence favors continuing on Rails: the hardest, largest module (the CMS) is
+done and the framework deleted three hand-rolled subsystems (storage, migrations,
+admin UI) as a side effect.
+
+## Re-estimate (remaining, post-gate)
+
+Grounded in the actual Phase 0–2 cost (the mechanical work compressed hard under
+AI assistance; the content-model *design* was the real spend, and it is now
+done). One experienced engineer, AI-assisted, calendar weeks:
+
+| Phase | Was (study) | Now | Why |
+| --- | --- | --- | --- |
+| 3 · Server-render all six portals | 1 wk | **0.5 wk** | The templated portal + content model already exist; this is fidelity + per-division section config. |
+| 4 · Port trip reports, bulletin board, BD islands, search | 1–1.5 wk | **1.5 wk** | Trip reports (ActiveStorage) and the bulletin board (threaded social) are the genuinely new model work. |
+| 5 · Cutover & decommission | 1 wk | **1 wk** | Mostly calendar — content-owner walkthrough, UAT, DNS. No data migration (demo, no users). |
+| — | | **~3 wks** | Plus the Azure tenant/consent queue, which runs in parallel and should start now. |
+
+External dependency to start immediately: the **Azure app registration + tenant
+admin consent** for Entra ID (out of our control; see `rails/README.md`).

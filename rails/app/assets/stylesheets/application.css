@@ -1,0 +1,90 @@
+/*
+ * This is a manifest file that'll be compiled into application.css.
+ *
+ * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
+ * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
+ * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
+ * depending on specificity.
+ *
+ * Consider organizing styles into separate files for maintainability.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Albers Intranet — portal + auth styling (brand maroon #51142a)      */
+/* ------------------------------------------------------------------ */
+:root {
+  --brand: #51142a;
+  --brand-tint: #f6eef1;
+  --ink: #14100f;
+  --muted: #6b6560;
+  --line: #e7e2dd;
+  --bg: #f7f5f2;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+}
+a { color: var(--brand); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 1100px; margin: 0 auto; padding: 24px 20px 64px; }
+
+/* top bar */
+.topbar {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--brand); color: #fff; padding: 12px 20px;
+}
+.topbar .brand { color: #fff; font-weight: 700; font-size: 18px; }
+.topbar .spacer { flex: 1; }
+.topbar-link, .topbar-user { color: #fff; font-size: 14px; }
+.topbar-link.linkish { background: none; border: 0; cursor: pointer; padding: 0; font: inherit; }
+.topbar-user { opacity: .85; }
+
+/* flash */
+.flash { max-width: 1100px; margin: 12px auto 0; padding: 10px 16px; border-radius: 8px; font-size: 14px; }
+.flash.notice { background: #e8f4ea; color: #1e5631; }
+.flash.alert  { background: #fdecec; color: #8a1c1c; }
+
+/* division nav + search */
+.divisions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.divisions a { padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); font-size: 14px; }
+.divisions a.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+.search { display: flex; gap: 8px; margin-bottom: 24px; }
+.search input[type=text] { flex: 1; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; }
+.search input[type=submit] { padding: 9px 16px; border: 0; border-radius: 8px; background: var(--brand); color: #fff; cursor: pointer; }
+
+/* hero */
+.hero { border-radius: 14px; overflow: hidden; background: var(--brand); color: #fff; margin-bottom: 28px; position: relative; }
+.hero--plain { padding: 8px; }
+.hero-img { width: 100%; height: 260px; object-fit: cover; display: block; opacity: .55; }
+.hero-copy { padding: 24px 28px; }
+.hero:not(.hero--plain) .hero-copy { position: absolute; bottom: 0; }
+.hero-copy h1 { margin: 0 0 6px; font-size: 32px; }
+.hero-copy p { margin: 0; opacity: .9; }
+
+/* content blocks + cards */
+.block { margin-bottom: 32px; }
+.block > h2 { font-size: 20px; border-bottom: 2px solid var(--brand); padding-bottom: 6px; margin-bottom: 16px; }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.card-img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
+.card h3 { margin: 6px 0; font-size: 17px; }
+.card .body { font-size: 14px; color: #333; }
+.pill { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--brand); background: var(--brand-tint); padding: 2px 8px; border-radius: 999px; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.empty { padding: 40px 0; text-align: center; }
+
+/* auth card */
+.auth-card { max-width: 420px; margin: 48px auto; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 32px; }
+.auth-card h1 { margin: 0 0 4px; }
+.auth-card hr { border: 0; border-top: 1px solid var(--line); margin: 20px 0; }
+.btn { display: block; width: 100%; padding: 11px 16px; border-radius: 8px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: inherit; cursor: pointer; text-align: left; }
+.btn-primary { background: var(--brand); color: #fff; border-color: var(--brand); text-align: center; font-weight: 600; }
+.btn-block { margin-bottom: 8px; }
+.dev-users { list-style: none; margin: 0; padding: 0; }
+.dev-users form { margin: 0 0 8px; }
+.dev-users .btn { display: flex; justify-content: space-between; align-items: center; }

@@ -1,0 +1,35 @@
+test:
+  service: Disk
+  root: <%= Rails.root.join("tmp/storage") %>
+
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+
+# Azure Blob Storage — production media store (no persistent disk required).
+# Requires the azure-storage-blob gem (in the Gemfile) and these env vars.
+azure:
+  service: AzureStorage
+  storage_account_name: <%= ENV["AZURE_STORAGE_ACCOUNT"] %>
+  storage_access_key: <%= ENV["AZURE_STORAGE_ACCESS_KEY"] %>
+  container: <%= ENV.fetch("AZURE_STORAGE_CONTAINER", "albers-intranet") %>
+
+# Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
+# amazon:
+#   service: S3
+#   access_key_id: <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
+#   secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
+#   region: us-east-1
+#   bucket: your_own_bucket-<%= Rails.env %>
+
+# Remember not to checkin your GCS keyfile to a repository
+# google:
+#   service: GCS
+#   project: your_project
+#   credentials: <%= Rails.root.join("path/to/gcs.keyfile") %>
+#   bucket: your_own_bucket-<%= Rails.env %>
+
+# mirror:
+#   service: Mirror
+#   primary: local
+#   mirrors: [ amazon, google, microsoft ]

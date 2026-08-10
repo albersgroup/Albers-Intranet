@@ -1,0 +1,30 @@
+<div class="auth-card">
+  <h1>Albers Intranet</h1>
+  <p class="muted">Sign in to continue</p>
+
+  <% if flash[:alert] %><div class="flash alert"><%= flash[:alert] %></div><% end %>
+  <% if flash[:notice] %><div class="flash notice"><%= flash[:notice] %></div><% end %>
+
+  <%= button_to "Sign in with Microsoft (Entra ID)", "/auth/entra_id",
+        method: :post, class: "btn btn-primary btn-block" %>
+  <p class="muted small">
+    Entra ID SSO activates once the Azure app registration and tenant admin
+    consent are in place. Until then, use a dev login below.
+  </p>
+
+  <% if @dev_users.present? %>
+    <hr>
+    <h2 class="small">Dev login</h2>
+    <ul class="dev-users">
+      <% @dev_users.each do |user| %>
+        <li>
+          <%= button_to dev_login_path, method: :post, class: "btn btn-ghost btn-block" do %>
+            <%= hidden_field_tag :user_id, user.id %>
+            <span><%= user.display_name %></span>
+            <span class="muted small"><%= user.role %><%= " · #{user.division}" if user.division %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>

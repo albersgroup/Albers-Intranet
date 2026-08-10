@@ -1,0 +1,82 @@
+<% content_for :title, "#{@division.humanize} Portal — Albers Intranet" %>
+
+<nav class="divisions">
+  <% ContentItem::DIVISIONS.each do |d| %>
+    <%= link_to d.humanize, portal_path(division: d),
+          class: ("active" if d == @division) %>
+  <% end %>
+</nav>
+
+<%= form_with url: portal_path(division: @division), method: :get, class: "search" do %>
+  <%= text_field_tag :q, params[:q], placeholder: "Search #{@division.humanize} content…" %>
+  <%= submit_tag "Search" %>
+<% end %>
+
+<% if @results %>
+  <section class="block">
+    <h2>Search results for “<%= params[:q] %>”</h2>
+    <% if @results.any? %>
+      <ul class="cards">
+        <% @results.each do |item| %>
+          <li class="card">
+            <span class="pill"><%= item.content_type.humanize %></span>
+            <h3><%= item.title %></h3>
+            <% if item.subtitle.present? %><p class="muted"><%= item.subtitle %></p><% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="muted">No matches.</p>
+    <% end %>
+  </section>
+<% end %>
+
+<% if @hero %>
+  <header class="hero">
+    <% if @hero.image.attached? %>
+      <%= image_tag url_for(@hero.image), class: "hero-img" %>
+    <% end %>
+    <div class="hero-copy">
+      <h1><%= @hero.title %></h1>
+      <% if @hero.subtitle.present? %><p><%= @hero.subtitle %></p><% end %>
+    </div>
+  </header>
+<% else %>
+  <header class="hero hero--plain">
+    <div class="hero-copy"><h1><%= @division.humanize %></h1></div>
+  </header>
+<% end %>
+
+<% if @sections.blank? %>
+  <p class="muted empty">No published content for this division yet. Add some in the
+    <%= link_to "admin", avo.root_path %>.</p>
+<% end %>
+
+<% @sections.each do |section, items| %>
+  <section class="block">
+    <h2><%= section.tr("_", " ").titleize %></h2>
+    <ul class="cards">
+      <% items.each do |item| %>
+        <li class="card card--<%= item.content_type %>">
+          <span class="pill"><%= item.content_type.humanize %></span>
+          <% if item.image.attached? %>
+            <%= image_tag url_for(item.image), class: "card-img" %>
+          <% elsif item.media_asset&.file&.attached? && item.media_asset.image? %>
+            <%= image_tag url_for(item.media_asset.file), class: "card-img" %>
+          <% end %>
+          <h3>
+            <% if item.link_url.present? %>
+              <%= link_to item.title, item.link_url %>
+            <% else %>
+              <%= item.title %>
+            <% end %>
+          </h3>
+          <% if item.subtitle.present? %><p class="muted"><%= item.subtitle %></p><% end %>
+          <% if item.body.present? %>
+            <div class="body"><%= item.body %></div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
