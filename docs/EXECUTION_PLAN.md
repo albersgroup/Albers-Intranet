@@ -49,9 +49,10 @@ representative content.**
 | 1 | **Rails foundation** | Rails 8 app, keep-as-is models, Entra OIDC, Avo, Pundit, ActiveStorage→Azure, RSpec + CI | ✅ Yes |
 | 2 | **Unified CMS** (the roadmap feature) | `content_items` / `content_versions` / `media_assets`; draft/schedule/publish, versioning, media library; one Avo admin; seeded content | ✅ Yes |
 | — | **DECISION GATE** | Working Rails CMS to evaluate; re-estimate the rest | ⏸ Stop & decide |
-| 3 | Server-render the division portals | Six hand-assembled React homes → one templated page driven by the content model. Done when [visual-diff](./VISUAL_DIFF_PLAN.md) parity passes. | ❌ Post-gate |
-| 4 | Port the remaining apps | Trip reports (ActiveStorage), bulletin board (ActiveRecord), BD tools as React islands, pg_search across all content | ❌ Post-gate |
-| 5 | Cutover & decommission | Content-owner walkthrough, UAT, DNS switch, retire the Node app | ❌ Post-gate |
+| 3 | [Split the content model into per-type models](./CONTENT_MODEL_SPLIT_PLAN.md) | One `ContentItem` + `content_type` enum → Rails delegated types, nine concrete models (News, QuickLink, HeroAsset, ...), one Avo resource per type | ❌ Post-gate |
+| 4 | Server-render the division portals | Six hand-assembled React homes → one templated page driven by the content model. Done when [visual-diff](./VISUAL_DIFF_PLAN.md) parity passes. | ❌ Post-gate |
+| 5 | Port the remaining apps | Trip reports (ActiveStorage), bulletin board (ActiveRecord), BD tools as React islands, pg_search across all content | ❌ Post-gate |
+| 6 | Cutover & decommission | Content-owner walkthrough, UAT, DNS switch, retire the Node app | ❌ Post-gate |
 
 ---
 
@@ -136,7 +137,8 @@ closing the XSS blocker as a side effect of adoption.
 - **Seed** representative content across every division and content type.
 - **Proof render**: a thin Rails controller/view rendering one division portal from
   `content_items` — demonstrating the model drives real pages. (Full portal
-  server-render is Phase 3.)
+  server-render is Phase 4, after the content model is split into per-type
+  models in Phase 3.)
 
 ## Decision Gate
 
@@ -200,10 +202,11 @@ done). One experienced engineer, AI-assisted, calendar weeks:
 
 | Phase | Was (study) | Now | Why |
 | --- | --- | --- | --- |
-| 3 · Server-render all six portals | 1 wk | **0.5 wk** | The templated portal + content model already exist; this is fidelity + per-division section config. |
-| 4 · Port trip reports, bulletin board, BD islands, search | 1–1.5 wk | **1.5 wk** | Trip reports (ActiveStorage) and the bulletin board (threaded social) are the genuinely new model work. |
-| 5 · Cutover & decommission | 1 wk | **1 wk** | Mostly calendar — content-owner walkthrough, UAT, DNS. No data migration (demo, no users). |
-| — | | **~3 wks** | Plus the Azure tenant/consent queue, which runs in parallel and should start now. |
+| 3 · Split content model into per-type models | — (identified post-gate) | **0.5–1 wk** | Reworks Phase 2's model/admin layer (new post-gate finding — see [plan](./CONTENT_MODEL_SPLIT_PLAN.md)); CMS behaviors (versioning, scheduling, search, media) are unaffected, so this is scoped to models, Avo resources, seeds, and specs. |
+| 4 · Server-render all six portals | 1 wk | **0.5 wk** | The templated portal + content model already exist; this is fidelity + per-division section config. |
+| 5 · Port trip reports, bulletin board, BD islands, search | 1–1.5 wk | **1.5 wk** | Trip reports (ActiveStorage) and the bulletin board (threaded social) are the genuinely new model work. |
+| 6 · Cutover & decommission | 1 wk | **1 wk** | Mostly calendar — content-owner walkthrough, UAT, DNS. No data migration (demo, no users). |
+| — | | **~3.5–4 wks** | Plus the Azure tenant/consent queue, which runs in parallel and should start now. |
 
 External dependency to start immediately: the **Azure app registration + tenant
 admin consent** for Entra ID (out of our control; see `rails/README.md`).
