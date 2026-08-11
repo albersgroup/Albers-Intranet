@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_11_142012) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_11_202636) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -59,6 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_11_142012) do
   end
 
   create_table "content_blocks", force: :cascade do |t|
+    t.string "badges", default: [], null: false, array: true
     t.string "block_key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -130,14 +131,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_11_142012) do
   create_table "quick_links", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "icon"
+    t.string "icon_color"
     t.string "link_url", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "team_spotlights", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "department"
     t.string "employee_name"
     t.string "employee_role"
+    t.string "spotlight_type"
     t.datetime "updated_at", null: false
   end
 

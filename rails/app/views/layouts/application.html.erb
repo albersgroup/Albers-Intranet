@@ -18,25 +18,14 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%# Explicit list — NOT :app, which globs the directory and would also serve
+        the raw Tailwind input (application.tailwind.css). %>
+    <%= stylesheet_link_tag "tailwind", "application", "actiontext", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <header class="topbar">
-      <a href="/" class="brand">Albers Intranet</a>
-      <div class="spacer"></div>
-      <% if user_signed_in? %>
-        <% if current_user.admin? || current_user.division_admin? %>
-          <%= link_to "Admin (CMS)", avo.root_path, class: "topbar-link" %>
-        <% end %>
-        <span class="topbar-user"><%= current_user.display_name %></span>
-        <%= button_to "Sign out", logout_path, method: :delete, class: "topbar-link linkish" %>
-      <% else %>
-        <%= link_to "Sign in", login_path, class: "topbar-link" %>
-      <% end %>
-    </header>
+    <%= render "shared/topbar" %>
 
     <% if flash[:notice] %><div class="flash notice"><%= flash[:notice] %></div><% end %>
     <% if flash[:alert] %><div class="flash alert"><%= flash[:alert] %></div><% end %>

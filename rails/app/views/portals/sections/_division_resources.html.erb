@@ -1,0 +1,20 @@
+<%# Static "Division Resources — coming soon" placeholder card, present on
+    the Industrials and Advanced Programs pages only. %>
+<div class="shadcn-card rounded-xl border bg-card border-card-border text-card-foreground shadow-sm">
+  <div class="flex flex-col space-y-1.5 p-6">
+    <div class="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+      <%= lucide_icon("file-text", css: "w-5 h-5 #{section.locals[:header_icon_css]}") %>
+      Division Resources
+    </div>
+    <div class="text-sm text-muted-foreground">
+      <%= section.locals[:description] %>
+    </div>
+  </div>
+  <div class="p-6 pt-0">
+    <div class="text-center py-8 text-muted-foreground">
+      <%= lucide_icon(section.locals[:glyph], css: "w-12 h-12 mx-auto mb-3 opacity-50") %>
+      <p class="text-sm">Division resources coming soon.</p>
+      <p class="text-xs mt-1">Contact your division lead for more information.</p>
+    </div>
+  </div>
+</div>

@@ -16,6 +16,14 @@ export interface Scenario {
   oldContentSelector?: string;
   /** Same idea, for the Rails side. */
   newContentSelector?: string;
+  /**
+   * Viewport width for the Rails-side comparison. Node's authenticated pages
+   * render their content region at 1440 − 288 (sidebar) = 1152px, so their
+   * baselines are 1152 wide. Rails has no sidebar — its <main> spans the full
+   * viewport — so the compare runs those scenarios at a 1152 viewport instead
+   * of baking Node's sidebar width into Rails markup. Undefined = 1440.
+   */
+  viewportWidth?: number;
 }
 
 // Node's authenticated routes are wrapped in AppSidebar, with the actual page
@@ -55,6 +63,7 @@ export const scenarios: Scenario[] = [
     requiresAuth: true,
     oldContentSelector: NODE_MAIN_SELECTOR,
     newContentSelector: RAILS_MAIN_SELECTOR,
+    viewportWidth: 1152,
   },
   {
     name: "industrials",
@@ -63,6 +72,7 @@ export const scenarios: Scenario[] = [
     requiresAuth: true,
     oldContentSelector: NODE_MAIN_SELECTOR,
     newContentSelector: RAILS_MAIN_SELECTOR,
+    viewportWidth: 1152,
   },
   {
     name: "advanced-programs",
@@ -73,6 +83,7 @@ export const scenarios: Scenario[] = [
     requiresAuth: true,
     oldContentSelector: NODE_MAIN_SELECTOR,
     newContentSelector: RAILS_MAIN_SELECTOR,
+    viewportWidth: 1152,
   },
   {
     name: "bou",
@@ -81,5 +92,6 @@ export const scenarios: Scenario[] = [
     requiresAuth: true,
     oldContentSelector: NODE_MAIN_SELECTOR,
     newContentSelector: RAILS_MAIN_SELECTOR,
+    viewportWidth: 1152,
   },
 ];

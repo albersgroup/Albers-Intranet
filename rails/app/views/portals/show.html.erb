@@ -1,82 +1,42 @@
+<%# The portal page is a pixel-faithful transcription of the old Node app's
+    division home pages, composed from Portal::Layout (see that file). Class
+    strings are verbatim from the React source with shadcn's tailwind-merge
+    semantics pre-applied (an overriding class replaces the base class rather
+    than appearing alongside it). Resist "cleanups" — tag choices and DOM
+    nesting are part of the pixel contract with visual-diff/baselines. %>
 <% content_for :title, "#{@division.humanize} Portal — Albers Intranet" %>
 
-<nav class="divisions">
-  <% ContentItem::DIVISIONS.each do |d| %>
-    <%= link_to d.humanize, portal_path(division: d),
-          class: ("active" if d == @division) %>
-  <% end %>
-</nav>
-
-<%= form_with url: portal_path(division: @division), method: :get, class: "search" do %>
-  <%= text_field_tag :q, params[:q], placeholder: "Search #{@division.humanize} content…" %>
-  <%= submit_tag "Search" %>
-<% end %>
-
 <% if @results %>
-  <section class="block">
-    <h2>Search results for “<%= params[:q] %>”</h2>
-    <% if @results.any? %>
-      <ul class="cards">
-        <% @results.each do |item| %>
-          <li class="card">
-            <span class="pill"><%= item.content_record_type.underscore.humanize %></span>
-            <h3><%= item.title %></h3>
-            <% if item.subtitle.present? %><p class="muted"><%= item.subtitle %></p><% end %>
-          </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p class="muted">No matches.</p>
-    <% end %>
-  </section>
-<% end %>
-
-<% if @hero %>
-  <header class="hero">
-    <% if @hero.image.attached? %>
-      <%= image_tag url_for(@hero.image), class: "hero-img" %>
-    <% end %>
-    <div class="hero-copy">
-      <h1><%= @hero.title %></h1>
-      <% if @hero.subtitle.present? %><p><%= @hero.subtitle %></p><% end %>
-    </div>
-  </header>
+  <%= render "portals/sections/search_results" %>
 <% else %>
-  <header class="hero hero--plain">
-    <div class="hero-copy"><h1><%= @division.humanize %></h1></div>
-  </header>
-<% end %>
+  <div class="p-6 pb-24 max-w-7xl mx-auto space-y-6">
+    <% hero = capture do %>
+      <%= render "portals/sections/hero", hero: @layout.hero, override: @hero_override, division: @division %>
+    <% end %>
+    <% if @layout.hero_cell_css.nil? %>
+      <%= hero %>
+    <% else %>
+      <%= tag.div hero, class: @layout.hero_cell_css.presence %>
+    <% end %>
 
-<% if @sections.blank? %>
-  <p class="muted empty">No published content for this division yet. Add some in the
-    <%= link_to "admin", avo.root_path %>.</p>
-<% end %>
-
-<% @sections.each do |section, items| %>
-  <section class="block">
-    <h2><%= section.tr("_", " ").titleize %></h2>
-    <ul class="cards">
-      <% items.each do |item| %>
-        <li class="card card--<%= item.content_record_type.underscore %>">
-          <span class="pill"><%= item.content_record_type.underscore.humanize %></span>
-          <% if item.image.attached? %>
-            <%= image_tag url_for(item.image), class: "card-img" %>
-          <% elsif item.media_asset&.file&.attached? && item.media_asset.image? %>
-            <%= image_tag url_for(item.media_asset.file), class: "card-img" %>
+    <% @layout.rows.each do |row| %>
+      <% cells = capture do %>
+        <% row.cells.each do |cell| %>
+          <% content = render "portals/sections/#{cell.section.partial}",
+                              section: cell.section,
+                              items: cell.section.key ? (@sections[cell.section.key] || []) : [] %>
+          <% if cell.css.nil? %>
+            <%= content %>
+          <% else %>
+            <%= tag.div content, class: cell.css.presence %>
           <% end %>
-          <h3>
-            <% if item.content_record.respond_to?(:link_url) && item.content_record.link_url.present? %>
-              <%= link_to item.title, item.content_record.link_url %>
-            <% else %>
-              <%= item.title %>
-            <% end %>
-          </h3>
-          <% if item.subtitle.present? %><p class="muted"><%= item.subtitle %></p><% end %>
-          <% if item.content_record.respond_to?(:body) && item.content_record.body.present? %>
-            <div class="body"><%= item.content_record.body %></div>
-          <% end %>
-        </li>
+        <% end %>
       <% end %>
-    </ul>
-  </section>
+      <% if row.css.nil? %>
+        <%= cells %>
+      <% else %>
+        <%= tag.div cells, class: row.css %>
+      <% end %>
+    <% end %>
+  </div>
 <% end %>

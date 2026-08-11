@@ -33,9 +33,13 @@ New top-level `visual-diff/` directory (sibling to `client/`, `server/`,
    into the running Node app, navigates each scenario route, screenshots it,
    and saves PNGs into `visual-diff/baselines/`. Run once now, and again only
    if a division's Node design is deliberately changed before decommission
-   (it shouldn't be — Node is frozen). **These PNGs are committed to git** —
-   they are the versioned definition of "pixel-perfect," and once Node is gone
-   this is the only record of what it looked like.
+   (it shouldn't be — Node is frozen), **or if the capture environment
+   changes**: baselines are environment-bound (font metrics change wrapping
+   and layout), and the originals had to be recaptured inside the devcontainer
+   on 2026-08-11 because even the unchanged Node app couldn't match PNGs
+   rendered with another machine's fonts. **These PNGs are committed to git**
+   — they are the versioned definition of "pixel-perfect," and once Node is
+   gone this is the only record of what it looked like.
 2. **`compare.spec.ts`** — a real Playwright test. For each scenario, navigates
    to the equivalent Rails URL and asserts `toHaveScreenshot()` against that
    same baseline file (via `snapshotPathTemplate` pointing both capture and

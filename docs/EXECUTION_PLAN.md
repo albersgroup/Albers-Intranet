@@ -50,7 +50,7 @@ representative content.**
 | 2 | **Unified CMS** (the roadmap feature) | `content_items` / `content_versions` / `media_assets`; draft/schedule/publish, versioning, media library; one Avo admin; seeded content | ✅ Yes |
 | — | **DECISION GATE** | Working Rails CMS to evaluate; re-estimate the rest | ⏸ Stop & decide |
 | 3 | [Split the content model into per-type models](./CONTENT_MODEL_SPLIT_PLAN.md) | One `ContentItem` + `content_type` enum → Rails delegated types, nine concrete models (News, QuickLink, HeroAsset, ...), one Avo resource per type | ✅ Yes |
-| 4 | Server-render the division portals | Six hand-assembled React homes → one templated page driven by the content model. Done when [visual-diff](./VISUAL_DIFF_PLAN.md) parity passes. | ❌ Post-gate |
+| 4 | Server-render the division portals | Five hand-assembled React homes → one templated page (registry-driven) at pixel parity; [visual-diff](./VISUAL_DIFF_PLAN.md) passes all five scenarios. `/business-development` (the sixth home) deferred to Phase 5 with the BD tools. | ✅ Yes |
 | 5 | Port the remaining apps | Trip reports (ActiveStorage), bulletin board (ActiveRecord), BD tools as React islands, pg_search across all content | ❌ Post-gate |
 | 6 | Cutover & decommission | Content-owner walkthrough, UAT, DNS switch, retire the Node app | ❌ Post-gate |
 
@@ -200,6 +200,28 @@ Phases 0–3 are built, committed, and verified. What exists to evaluate:
 evidence favors continuing on Rails: the hardest, largest module (the CMS) is
 done and the framework deleted three hand-rolled subsystems (storage, migrations,
 admin UI) as a side effect.
+
+## Phase 4 — done
+
+Executed 2026-08-11. The five division portals are server-rendered from a
+per-division layout registry (`rails/app/models/portal/layout.rb`) that
+transcribes the Node pages — heroes, section rows, and the hardcoded defaults
+Node shows against an empty database. Rails mirrors Node's semantics exactly:
+database content overrides a section's defaults; otherwise the default/empty
+state renders. Styling is Tailwind (`tailwindcss-rails`, pinned to the v3.4
+binary — Node's class strings are v3 semantics), with the Node theme tokens
+ported verbatim and ~34 lucide icons vendored as inline SVGs from the repo's
+own `node_modules`.
+
+**Gate result: all five visual-diff scenarios pass** at the unchanged
+`maxDiffPixelRatio: 0.02`, against baselines recaptured from the frozen Node
+app inside the devcontainer (the original baselines carried another machine's
+font metrics — even Node itself couldn't match them here; see
+`visual-diff/README.md`, "Baselines are environment-bound"). The parity run
+uses `SEED_PROFILE=parity` (users only, zero content items — the state the
+baselines were frozen in); `SEED_PROFILE=demo` seeds representative content,
+including the four link cards as Avo-editable QuickLink items. RSpec: 35
+examples green.
 
 ## Re-estimate (remaining, post-gate)
 

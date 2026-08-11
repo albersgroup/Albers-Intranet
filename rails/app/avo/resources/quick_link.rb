@@ -10,6 +10,8 @@ class Avo::Resources::QuickLink < Avo::BaseResource
     content_envelope_fields
     field :link_url, as: :text, required: true
     field :icon, as: :text, help: "Icon name/class used by the quick-link tile."
+    field :icon_color, as: :text,
+      help: "Tailwind text color class for the icon chip (e.g. text-blue-600). Defaults to a rotating palette."
   end
 
   def filters

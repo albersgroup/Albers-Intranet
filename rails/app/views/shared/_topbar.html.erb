@@ -1,0 +1,13 @@
+<header class="topbar">
+  <a href="/" class="brand">Albers Intranet</a>
+  <div class="spacer"></div>
+  <% if user_signed_in? %>
+    <% if current_user.admin? || current_user.division_admin? %>
+      <%= link_to "Admin (CMS)", avo.root_path, class: "topbar-link" %>
+    <% end %>
+    <span class="topbar-user"><%= current_user.display_name %></span>
+    <%= button_to "Sign out", logout_path, method: :delete, class: "topbar-link linkish" %>
+  <% else %>
+    <%= link_to "Sign in", login_path, class: "topbar-link" %>
+  <% end %>
+</header>

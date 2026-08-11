@@ -1,0 +1,33 @@
+<%# NewsletterPreview.tsx. The baseline state is the empty card; the populated
+    state renders a simple title + download affordance (Node's client-side
+    pdf.js first-page preview has no server-side equivalent — populated
+    fidelity is covered by request specs, not the frozen baselines). %>
+<% newsletter = items.find { |i| i.content_record_type == "Newsletter" && i.content_record.file.attached? } %>
+<% if newsletter.nil? %>
+  <div class="shadcn-card rounded-xl border bg-card border-card-border text-card-foreground shadow-sm overflow-hidden w-full h-full min-h-[400px] flex flex-col">
+    <div class="p-6 flex flex-col items-center justify-center py-12 flex-1">
+      <%= lucide_icon("file-text", css: "w-12 h-12 text-muted-foreground mb-4") %>
+      <h3 class="text-lg font-medium text-foreground mb-2">No newsletter available</h3>
+      <p class="text-muted-foreground text-center">
+        A newsletter for this division will appear here once uploaded by an administrator.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="shadcn-card rounded-xl border bg-card border-card-border text-card-foreground shadow-sm overflow-hidden w-full h-full min-h-[400px] flex flex-col">
+    <div class="p-6 flex flex-col items-center justify-center py-12 flex-1">
+      <%= lucide_icon("newspaper", css: "w-12 h-12 text-primary mb-4") %>
+      <h3 class="text-lg font-medium text-foreground mb-2"><%= newsletter.title %></h3>
+      <% if newsletter.subtitle.present? %>
+        <p class="text-muted-foreground text-center mb-3"><%= newsletter.subtitle %></p>
+      <% end %>
+      <a href="<%= url_for(newsletter.content_record.file) %>" target="_blank" rel="noopener noreferrer">
+        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 border [border-color:var(--button-outline)] shadow-xs active:shadow-none min-h-9 px-4 py-2 gap-2">
+          <%= lucide_icon("newspaper", css: "w-4 h-4") %>
+          Read More...
+          <%= lucide_icon("chevron-down", css: "w-4 h-4") %>
+        </button>
+      </a>
+    </div>
+  </div>
+<% end %>

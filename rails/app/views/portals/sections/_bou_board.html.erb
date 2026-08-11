@@ -1,0 +1,32 @@
+<%# BOUBulletinBoard.tsx, static parity rendering: the header card in its
+    non-member ("View Only") state plus the empty posts card — exactly what
+    the frozen BOU baseline shows. The live threaded board is Phase 5 work. %>
+<div class="space-y-4">
+  <div class="shadcn-card rounded-xl border bg-card border-card-border text-card-foreground shadow-sm">
+    <div class="flex flex-col space-y-1.5 p-6 pb-3">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <%= lucide_icon("users", css: "h-5 w-5 text-primary") %>
+          <%# no leading-none: tailwind-merge drops it when a text-size override (text-lg) is present %>
+          <div class="font-semibold tracking-tight text-lg">BOU Bulletin Board</div>
+        </div>
+        <div class="whitespace-nowrap inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover-elevate border-transparent bg-secondary text-secondary-foreground">
+          View Only
+        </div>
+      </div>
+      <p class="text-sm text-muted-foreground mt-2">
+        Only BOU team members can post, comment, and interact with the bulletin board.
+      </p>
+    </div>
+  </div>
+
+  <div class="shadcn-card rounded-xl border bg-card border-card-border text-card-foreground shadow-sm">
+    <div class="p-8 text-center">
+      <%= lucide_icon("users", css: "h-12 w-12 text-muted-foreground mx-auto mb-4") %>
+      <h3 class="font-semibold mb-2">No posts yet</h3>
+      <p class="text-sm text-muted-foreground">
+        Check back later for updates from the BOU team.
+      </p>
+    </div>
+  </div>
+</div>

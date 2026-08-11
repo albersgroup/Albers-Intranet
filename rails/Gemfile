@@ -54,6 +54,13 @@ gem "omniauth-rails_csrf_protection"
 # Azure Blob storage service for Active Storage (production)
 gem "azure-storage-blob", require: false
 
+# Tailwind via the standalone binary (no Node in rails/). Pinned to the v3.4
+# binary line: portal ERB copies the Node app's Tailwind v3 class strings
+# verbatim, and v4 changes their meaning (shadow-xs becomes a real shadow,
+# rounded-sm resizes, default border color changes). Do not bump to >= 4.
+gem "tailwindcss-rails", "~> 3.3"
+gem "tailwindcss-ruby", "~> 3.4"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

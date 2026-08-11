@@ -20,5 +20,13 @@ export default defineConfig({
       animations: "disabled",
     },
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    {
+      name: "chromium",
+      // The device descriptor carries its own viewport (1280×720) which would
+      // silently override the top-level 1440×900 — re-assert it after the
+      // spread. Baselines were captured at 1440×900 (capture-baseline.ts).
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
+    },
+  ],
 });

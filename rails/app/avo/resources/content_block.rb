@@ -11,6 +11,8 @@ class Avo::Resources::ContentBlock < Avo::BaseResource
     field :body, as: :trix, always_show: true
     field :block_key, as: :text,
       help: "Optional stable key for a named singleton block (e.g. strategic_plan)."
+    field :badges, as: :tags,
+      help: "Short labels rendered as outline badges under the block (e.g. Innovation, Excellence)."
   end
 
   def filters

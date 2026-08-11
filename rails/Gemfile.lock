@@ -457,6 +457,14 @@ GEM
       activesupport (>= 3)
       attr_required (>= 0.0.5)
       httpclient (>= 2.4)
+    tailwindcss-rails (3.3.2)
+      railties (>= 7.0.0)
+      tailwindcss-ruby (~> 3.0)
+    tailwindcss-ruby (3.4.19-aarch64-linux)
+    tailwindcss-ruby (3.4.19-arm-linux)
+    tailwindcss-ruby (3.4.19-arm64-darwin)
+    tailwindcss-ruby (3.4.19-x86_64-darwin)
+    tailwindcss-ruby (3.4.19-x86_64-linux)
     thor (1.5.0)
     thruster (0.1.23)
     thruster (0.1.23-aarch64-linux)
@@ -539,6 +547,8 @@ DEPENDENCIES
   solid_cache
   solid_queue
   stimulus-rails
+  tailwindcss-rails (~> 3.3)
+  tailwindcss-ruby (~> 3.4)
   thruster
   turbo-rails
   tzinfo-data
@@ -711,6 +721,12 @@ CHECKSUMS
   solid_queue (1.6.0) sha256=b5fc3bb34162e09d8f960df6400d0f9304dc80fe66c2cfface31c32b228de6a1
   stimulus-rails (1.3.4) sha256=765676ffa1f33af64ce026d26b48e8ffb2e0b94e0f50e9119e11d6107d67cb06
   swd (1.3.0) sha256=bc382a19e1d36a95529b25152976db61b80376c3d486b21c8dd60ac2b5c06389
+  tailwindcss-rails (3.3.2) sha256=e879317e55eb7cf39e3f4db306a8ef8d54962de8a2be656aea3d96b4163d6f0b
+  tailwindcss-ruby (3.4.19-aarch64-linux) sha256=8abdd5c9afa14b1ee337e37223170165becaa1ad7c4968457d3fc48cddd4e7c6
+  tailwindcss-ruby (3.4.19-arm-linux) sha256=94b0764763d80dc5a8fa52c21ea2e57b2fac9a578293886173e7776f55dab22a
+  tailwindcss-ruby (3.4.19-arm64-darwin) sha256=e636d4c34d1abfbd891f4e46669c259a87f434ac03046c9c58ca4eda704d4aa2
+  tailwindcss-ruby (3.4.19-x86_64-darwin) sha256=c751c5266fb1ad0e3d1495bd14b37c65ceaed3f189748016118adb51a3a11e0a
+  tailwindcss-ruby (3.4.19-x86_64-linux) sha256=9e312c34ec26813fc1917535be3816890e2304be7a320539c242d86d14e12c2a
   thor (1.5.0) sha256=e3a9e55fe857e44859ce104a84675ab6e8cd59c650a49106a05f55f136425e73
   thruster (0.1.23) sha256=ad3081e8ff3b5cb413768292c367f1e015c423bb6b35919b9b9f533af50d639f
   thruster (0.1.23-aarch64-linux) sha256=042a05581dd1d750d1583d83817460b1f7fde254ed0b2bcd7ec56f9bed278c7a
