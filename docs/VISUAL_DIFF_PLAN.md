@@ -59,12 +59,33 @@ the scenario config captures that explicitly rather than assuming symmetry.
 
 ## Capture scope: content region, not full page
 
-Full-page for `corporate` only (no sidebar chrome, public route). For the
-other four, screenshot just the `<main>` content region, not the full page.
-Rails intentionally uses a topbar instead of the Node app's sidebar — a
-full-page diff there would show ~100% mismatch on chrome alone and bury the
-signal that actually matters (does the portal *content* match). Configurable
-per-scenario, not hardcoded, in case full-page comparison is wanted later.
+Full-page on the Node side only for `corporate` — `PublicHome` wraps
+`CorporateHome` with zero chrome (no sidebar, no topbar), so full-page already
+*is* the content there. For the other four, screenshot just the content
+region, not the full page: Rails intentionally uses a topbar instead of
+Node's sidebar, and a full-page diff would show ~100% mismatch on chrome
+alone, burying the signal that actually matters (does the portal *content*
+match). Old/new selectors are independent per scenario, not shared, because
+the two apps' chrome isn't symmetric — notably:
+
+- Node has **two nested `<main>` tags** on authenticated pages: shadcn's
+  `SidebarInset` itself renders as `<main>` (wrapping the header bar + the
+  actual content `<main>`), so a naive `main` selector's `.first()` grabs the
+  outer one and pulls the header bar into the screenshot. The scenario config
+  targets `main.overflow-auto` specifically — the inner, content-only one
+  (`SidebarInset` is `overflow-hidden`, never `overflow-auto`).
+- Node's sidebar shell is a fixed-height flex layout (`h-screen` /
+  `overflow-hidden` / `overflow-auto`), so a content-region screenshot is
+  clipped to viewport height by default — anything below the fold is silently
+  cut off unless that layout is neutralized first (`visual-diff/layout-fix.ts`
+  injects a style override before any content-region screenshot on either
+  app; harmless no-op on Rails, which has no such fixed-height shell).
+- Even `corporate` isn't symmetric: Rails renders its topbar on *every* page
+  including the public portal, so the Rails side still scopes to `<main>`
+  there while the Node side stays full-page.
+
+Configurable per-scenario, not hardcoded, in case full-page comparison is
+wanted later.
 
 ## Auth for capture
 
