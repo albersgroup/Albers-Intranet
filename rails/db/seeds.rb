@@ -4,8 +4,13 @@
 
 puts "Clearing existing CMS data…"
 PaperTrail::Version.delete_all
-ActiveStorage::Attachment.where(record_type: %w[ContentItem MediaAsset]).find_each(&:purge)
+ActiveStorage::Attachment.where(record_type: %w[ContentItem MediaAsset News ContentBlock TeamSpotlight Bulletin Newsletter]).find_each(&:purge)
+ActionText::RichText.delete_all
 ContentItem.delete_all
+# delete_all is a raw SQL DELETE — it doesn't trigger ContentItem's
+# `dependent: :destroy`, so each concrete table needs clearing too.
+[ News, QuickLink, HeroAsset, ContentBlock, TeamSpotlight, Newsletter, Bulletin, LinkedinPost, IndustryEvent ]
+  .each(&:delete_all)
 MediaAsset.delete_all
 User.delete_all
 
@@ -40,73 +45,75 @@ logo = MediaAsset.new(title: "Albers Wordmark", description: "Primary brand word
 attach_svg(logo.file, "ALBERS")
 logo.save!
 
-# -- Content helper ----------------------------------------------------------
-def item(attrs)
-  body = attrs.delete(:body)
-  hero_label = attrs.delete(:hero)
+# -- Content helper ------------------------------------------------------
+# Each concrete type (News, QuickLink, ...) delegates the shared envelope
+# fields (division, section, status, title, ...) onto its own content_item,
+# so a plain `Model.create!(attrs)` handles both the envelope and the type's
+# own fields (body, link_url, ...) in one call — see ContentRecord concern.
+def content(model_class, hero: nil, **attrs)
   color = attrs[:division] == "defense" ? "#0E2841" : "#51142a"
-  ci = ContentItem.new(attrs)
-  ci.body = body if body
-  ci.save!
-  attach_svg(ci.image, hero_label, color) if hero_label
-  ci
+  record = model_class.create!(attrs)
+  attach_svg(record.image, hero, color) if hero
+  record
 end
 
 puts "Seeding content items…"
 
 # Corporate — the richest portal (mirrors the old CorporateHome composition)
-item(division: "corporate", section: "hero", content_type: "hero_asset", status: "published",
-     title: "Welcome to the Albers Aerospace Intranet",
-     subtitle: "Tools, announcements and resources for every team.",
-     author: corp_admin, hero: "Corporate")
-item(division: "corporate", section: "news", content_type: "news", status: "published",
-     title: "FY26 Strategic Plan published", subtitle: "Read the priorities for the year ahead.",
-     author: corp_admin, publish_at: 2.days.ago,
-     body: "<p>The leadership team has published the <strong>FY26 strategic plan</strong>. Highlights include expanded defense programs and new industrial partnerships.</p>")
-item(division: "corporate", section: "news", content_type: "news", status: "published",
-     title: "New 401(k) match effective July 1", subtitle: "Principal plan updates for all employees.",
-     author: corp_admin, publish_at: 5.days.ago)
-item(division: "corporate", section: "news", content_type: "news", status: "scheduled",
-     title: "All-hands meeting — agenda preview", subtitle: "Goes live the morning of the event.",
-     author: corp_admin, publish_at: 1.day.from_now)
-item(division: "corporate", section: "news", content_type: "news", status: "draft",
-     title: "DRAFT: Q3 town hall recap", subtitle: "Not yet published.", author: corp_admin)
-item(division: "corporate", section: "quick_links", content_type: "quick_link", status: "published",
-     title: "Unanet (Timekeeping)", link_url: "https://albers-aero.unanet.biz", author: corp_admin)
-item(division: "corporate", section: "quick_links", content_type: "quick_link", status: "published",
-     title: "Rippling (HR & Payroll)", link_url: "https://app.rippling.com", author: corp_admin)
-item(division: "corporate", section: "spotlights", content_type: "team_spotlight", status: "published",
-     title: "Spotlight: Propulsion Test Team", subtitle: "Completed 100 consecutive hot-fire tests.",
-     author: corp_admin, media_asset: logo)
-item(division: "corporate", section: "content_blocks", content_type: "content_block", status: "published",
-     title: "Our Mission", author: corp_admin,
-     body: "<p>Albers Aerospace delivers mission-critical capabilities across defense and industrial markets. This block is fully editable in the CMS — draft, preview, version, and publish.</p>")
+content(HeroAsset, division: "corporate", section: "hero", status: "published",
+        title: "Welcome to the Albers Aerospace Intranet",
+        subtitle: "Tools, announcements and resources for every team.",
+        author: corp_admin, hero: "Corporate")
+content(News, division: "corporate", section: "news", status: "published",
+        title: "FY26 Strategic Plan published", subtitle: "Read the priorities for the year ahead.",
+        author: corp_admin, publish_at: 2.days.ago,
+        body: "<p>The leadership team has published the <strong>FY26 strategic plan</strong>. Highlights include expanded defense programs and new industrial partnerships.</p>")
+content(News, division: "corporate", section: "news", status: "published",
+        title: "New 401(k) match effective July 1", subtitle: "Principal plan updates for all employees.",
+        author: corp_admin, publish_at: 5.days.ago)
+content(News, division: "corporate", section: "news", status: "scheduled",
+        title: "All-hands meeting — agenda preview", subtitle: "Goes live the morning of the event.",
+        author: corp_admin, publish_at: 1.day.from_now)
+content(News, division: "corporate", section: "news", status: "draft",
+        title: "DRAFT: Q3 town hall recap", subtitle: "Not yet published.", author: corp_admin)
+content(QuickLink, division: "corporate", section: "quick_links", status: "published",
+        title: "Unanet (Timekeeping)", link_url: "https://albers-aero.unanet.biz", author: corp_admin)
+content(QuickLink, division: "corporate", section: "quick_links", status: "published",
+        title: "Rippling (HR & Payroll)", link_url: "https://app.rippling.com", author: corp_admin)
+content(TeamSpotlight, division: "corporate", section: "spotlights", status: "published",
+        title: "Spotlight: Propulsion Test Team", subtitle: "Completed 100 consecutive hot-fire tests.",
+        author: corp_admin, media_asset: logo)
+content(ContentBlock, division: "corporate", section: "content_blocks", status: "published",
+        title: "Our Mission", author: corp_admin, block_key: "strategic_plan",
+        body: "<p>Albers Aerospace delivers mission-critical capabilities across defense and industrial markets. This block is fully editable in the CMS — draft, preview, version, and publish.</p>")
 
 # Defense — hero + bulletins + news (mirrors DefenseHome)
-item(division: "defense", section: "hero", content_type: "hero_asset", status: "published",
-     title: "Defense Division", subtitle: "Programs, bulletins and resources.",
-     author: def_admin, hero: "Defense")
-item(division: "defense", section: "bulletins", content_type: "bulletin", status: "published",
-     title: "Badge renewal deadline: Aug 31", subtitle: "Complete your annual security refresh.",
-     author: def_admin, publish_at: 1.day.ago)
-item(division: "defense", section: "news", content_type: "news", status: "published",
-     title: "New task order awarded", subtitle: "Congratulations to the capture team.",
-     author: def_admin, publish_at: 3.days.ago)
+content(HeroAsset, division: "defense", section: "hero", status: "published",
+        title: "Defense Division", subtitle: "Programs, bulletins and resources.",
+        author: def_admin, hero: "Defense")
+content(Bulletin, division: "defense", section: "bulletins", status: "published",
+        title: "Badge renewal deadline: Aug 31", subtitle: "Complete your annual security refresh.",
+        author: def_admin, publish_at: 1.day.ago,
+        body: "<p>All defense-division badges must be renewed by <strong>August 31</strong>. Schedule your refresh with Security.</p>")
+content(News, division: "defense", section: "news", status: "published",
+        title: "New task order awarded", subtitle: "Congratulations to the capture team.",
+        author: def_admin, publish_at: 3.days.ago)
 
 # Industrials + BOU — lighter portals
-item(division: "industrials", section: "hero", content_type: "hero_asset", status: "published",
-     title: "Industrials Division", author: admin, hero: "Industrials")
-item(division: "industrials", section: "bulletins", content_type: "bulletin", status: "published",
-     title: "Plant safety stand-down recap", author: admin, publish_at: 4.days.ago)
-item(division: "bou", section: "hero", content_type: "hero_asset", status: "published",
-     title: "Business Operations Unit", author: admin, hero: "BOU")
-item(division: "bou", section: "quick_links", content_type: "quick_link", status: "published",
-     title: "GovDash", link_url: "https://dashboard.govdash.com", author: admin)
+content(HeroAsset, division: "industrials", section: "hero", status: "published",
+        title: "Industrials Division", author: admin, hero: "Industrials")
+content(Bulletin, division: "industrials", section: "bulletins", status: "published",
+        title: "Plant safety stand-down recap", author: admin, publish_at: 4.days.ago,
+        body: "<p>Thanks to everyone who participated in this quarter's plant safety stand-down.</p>")
+content(HeroAsset, division: "bou", section: "hero", status: "published",
+        title: "Business Operations Unit", author: admin, hero: "BOU")
+content(QuickLink, division: "bou", section: "quick_links", status: "published",
+        title: "GovDash", link_url: "https://dashboard.govdash.com", author: admin)
 
 # Org-wide (division nil) — surfaces on every portal
-item(division: nil, section: "news", content_type: "news", status: "published",
-     title: "Company holiday: Independence Day", subtitle: "Offices closed July 4.",
-     author: admin, publish_at: 6.days.ago)
+content(News, division: nil, section: "news", status: "published",
+        title: "Company holiday: Independence Day", subtitle: "Offices closed July 4.",
+        author: admin, publish_at: 6.days.ago)
 
 puts "Seed complete: #{User.count} users, #{ContentItem.count} content items " \
      "(#{ContentItem.live.count} live), #{MediaAsset.count} media assets."

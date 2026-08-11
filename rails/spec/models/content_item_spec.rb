@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe ContentItem do
   describe "validations" do
-    it "requires a valid content_type, status and division" do
-      expect(build(:content_item, content_type: "bogus")).not_to be_valid
+    it "requires a content_record, a valid status and a valid division" do
+      expect(build(:content_item, content_record: nil)).not_to be_valid
       expect(build(:content_item, status: "bogus")).not_to be_valid
       expect(build(:content_item, division: "bogus")).not_to be_valid
       expect(build(:content_item, division: nil)).to be_valid # org-wide
@@ -72,6 +72,39 @@ RSpec.describe ContentItem do
       item = create(:content_item, :draft)
       expect { item.publish! }.to change { item.reload.status }.from("draft").to("published")
       expect(item.publish_at).to be_present
+    end
+  end
+
+  describe "delegated content_record" do
+    it "exposes the concrete type via content_record_type and its ?-predicate" do
+      item = create(:content_item, content_record: build(:quick_link, link_url: "https://example.com"))
+
+      expect(item.content_record_type).to eq("QuickLink")
+      expect(item.quick_link?).to be true
+      expect(item.news?).to be false
+      expect(item.content_record.link_url).to eq("https://example.com")
+    end
+  end
+
+  describe "#enforce_singleton_per_division" do
+    it "archives the previously-published hero asset in the same division when a new one publishes" do
+      first  = create(:content_item, section: "hero", division: "corporate",
+                       status: "published", content_record: build(:hero_asset))
+      second = create(:content_item, section: "hero", division: "corporate",
+                       status: "published", content_record: build(:hero_asset))
+
+      expect(first.reload.status).to eq("archived")
+      expect(second.reload.status).to eq("published")
+    end
+
+    it "does not affect hero assets in other divisions" do
+      corp    = create(:content_item, section: "hero", division: "corporate",
+                        status: "published", content_record: build(:hero_asset))
+      defense = create(:content_item, section: "hero", division: "defense",
+                        status: "published", content_record: build(:hero_asset))
+
+      expect(corp.reload.status).to eq("published")
+      expect(defense.reload.status).to eq("published")
     end
   end
 end

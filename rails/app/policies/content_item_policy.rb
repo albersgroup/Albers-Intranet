@@ -1,6 +1,7 @@
 class ContentItemPolicy < ApplicationPolicy
-  # Admins manage everything; division admins manage only their own division's
-  # content (plus org-wide items with no division); viewers get read-only.
+  # The Avo resource backed by ContentItem itself is now a read-only
+  # cross-type overview (editing happens on each type's own resource via
+  # ContentRecordPolicy) — index/show only, no create/update/destroy here.
   class Scope < ApplicationPolicy::Scope
     def resolve
       return scope.all if user&.admin?
@@ -10,19 +11,8 @@ class ContentItemPolicy < ApplicationPolicy
     end
   end
 
-  def index?  = staff?
-  def show?   = staff?
-  def create? = staff?
-  def new?    = create?
-
-  def update?
-    return false unless staff?
-
-    user.can_edit_division?(record.division)
-  end
-
-  def edit?    = update?
-  def destroy? = update?
+  def index? = staff?
+  def show?  = staff?
 
   private
 

@@ -1,5 +1,17 @@
 # Content Model Split — Per-Type Models Plan
 
+## Status
+
+**Implemented** (Phase 3, see [`EXECUTION_PLAN.md`](./EXECUTION_PLAN.md)). This
+doc is kept as the design record for *why* delegated types over STI and the
+resulting shape; a few details were adjusted during implementation — notably
+`ContentEnvelopeFields` lives at the model layer (a `ContentRecord` concern
+delegating title/subtitle/division/section/position/status/publish_at/
+author/media_asset/image onto each concrete type) rather than only at the Avo
+layer, and each Avo resource sets `self.authorization_policy = ContentRecordPolicy`
+(a new shared policy, since `ContentItemPolicy` now guards only the read-only
+overview resource).
+
 ## Why
 
 Phase 2 (built, in the PR) collapsed thirteen old content tables into one

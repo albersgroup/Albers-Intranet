@@ -6,7 +6,10 @@ class Avo::Actions::PublishNow < Avo::BaseAction
   def handle(query:, fields:, current_user:, resource:, **args)
     count = 0
     query.each do |record|
-      record.publish!
+      # ContentItem rows respond to publish! directly; the nine concrete-type
+      # resources (News, QuickLink, ...) publish through their content_item.
+      target = record.respond_to?(:publish!) ? record : record.content_item
+      target.publish!
       count += 1
     end
     succeed "Published #{count} #{'item'.pluralize(count)}."

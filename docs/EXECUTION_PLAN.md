@@ -49,7 +49,7 @@ representative content.**
 | 1 | **Rails foundation** | Rails 8 app, keep-as-is models, Entra OIDC, Avo, Pundit, ActiveStorage→Azure, RSpec + CI | ✅ Yes |
 | 2 | **Unified CMS** (the roadmap feature) | `content_items` / `content_versions` / `media_assets`; draft/schedule/publish, versioning, media library; one Avo admin; seeded content | ✅ Yes |
 | — | **DECISION GATE** | Working Rails CMS to evaluate; re-estimate the rest | ⏸ Stop & decide |
-| 3 | [Split the content model into per-type models](./CONTENT_MODEL_SPLIT_PLAN.md) | One `ContentItem` + `content_type` enum → Rails delegated types, nine concrete models (News, QuickLink, HeroAsset, ...), one Avo resource per type | ❌ Post-gate |
+| 3 | [Split the content model into per-type models](./CONTENT_MODEL_SPLIT_PLAN.md) | One `ContentItem` + `content_type` enum → Rails delegated types, nine concrete models (News, QuickLink, HeroAsset, ...), one Avo resource per type | ✅ Yes |
 | 4 | Server-render the division portals | Six hand-assembled React homes → one templated page driven by the content model. Done when [visual-diff](./VISUAL_DIFF_PLAN.md) parity passes. | ❌ Post-gate |
 | 5 | Port the remaining apps | Trip reports (ActiveStorage), bulletin board (ActiveRecord), BD tools as React islands, pg_search across all content | ❌ Post-gate |
 | 6 | Cutover & decommission | Content-owner walkthrough, UAT, DNS switch, retire the Node app | ❌ Post-gate |
@@ -172,22 +172,29 @@ cloned):
 
 ## Decision Gate — reached
 
-Phases 0–2 are built, committed, and verified. What exists to evaluate:
+Phases 0–3 are built, committed, and verified. What exists to evaluate:
 
 - **Stripped Node app** — `npm run check` and `npm run build` pass; the surviving
   surface is the port spec.
-- **Rails 8 CMS in `rails/`** — the unified `content_items` / PaperTrail
-  `versions` / `media_assets` model; one **Avo** admin replacing the six React
-  admin pages; **Pundit** division scoping; **ActionText** rich text (sanitized
-  by default); **scheduled publishing** job; **pg_search**; **Entra ID OIDC**
-  with a dev-login bypass; ActiveStorage wired to Azure Blob (prod) / disk (dev).
+- **Rails 8 CMS in `rails/`** — `content_items` (placement + publish lifecycle +
+  PaperTrail versions + media) delegating to **nine per-type models** (News,
+  QuickLink, HeroAsset, ContentBlock, TeamSpotlight, Newsletter, Bulletin,
+  LinkedinPost, IndustryEvent) via Rails `delegated_type` — one **Avo** resource
+  per type, each showing only its own fields, plus a read-only cross-type
+  overview (see [content-model-split plan](./CONTENT_MODEL_SPLIT_PLAN.md));
+  **Pundit** division scoping (`ContentRecordPolicy`); **ActionText** rich text
+  (sanitized by default) on the types that have a body; **scheduled publishing**
+  job; **pg_search** on title/subtitle; **Entra ID OIDC** with a dev-login
+  bypass; ActiveStorage wired to Azure Blob (prod) / disk (dev).
 - **Server-rendered portals** driven entirely by the content model (`/` and
   `/portal/:division`), seeded with representative content across every division
   and content type.
-- **Verification** — 20 RSpec examples green (model lifecycle, PaperTrail
-  rollback, Pundit scoping, scheduled-publish job, portal rendering, admin
-  access), RuboCop clean, GitHub Actions CI defined; a live authenticated
-  walkthrough confirmed admin CRUD through Avo.
+- **Verification** — 31 RSpec examples green (model lifecycle, delegated-type
+  read/write round-tripping, singleton-per-division enforcement, PaperTrail
+  rollback, Pundit scoping for both the overview and the per-type resources,
+  scheduled-publish job, portal rendering, admin access), GitHub Actions CI
+  defined; a live authenticated walkthrough confirmed admin CRUD through all
+  ten Avo resources.
 
 **This is the off-ramp.** The Node app still runs; stopping here is viable. The
 evidence favors continuing on Rails: the hardest, largest module (the CMS) is
@@ -196,17 +203,16 @@ admin UI) as a side effect.
 
 ## Re-estimate (remaining, post-gate)
 
-Grounded in the actual Phase 0–2 cost (the mechanical work compressed hard under
+Grounded in the actual Phase 0–3 cost (the mechanical work compressed hard under
 AI assistance; the content-model *design* was the real spend, and it is now
 done). One experienced engineer, AI-assisted, calendar weeks:
 
 | Phase | Was (study) | Now | Why |
 | --- | --- | --- | --- |
-| 3 · Split content model into per-type models | — (identified post-gate) | **0.5–1 wk** | Reworks Phase 2's model/admin layer (new post-gate finding — see [plan](./CONTENT_MODEL_SPLIT_PLAN.md)); CMS behaviors (versioning, scheduling, search, media) are unaffected, so this is scoped to models, Avo resources, seeds, and specs. |
-| 4 · Server-render all six portals | 1 wk | **0.5 wk** | The templated portal + content model already exist; this is fidelity + per-division section config. |
+| 4 · Server-render all six portals | 1 wk | **0.5 wk** | The templated portal + per-type content model already exist; this is fidelity + per-division section config, gated by [visual-diff](./VISUAL_DIFF_PLAN.md). |
 | 5 · Port trip reports, bulletin board, BD islands, search | 1–1.5 wk | **1.5 wk** | Trip reports (ActiveStorage) and the bulletin board (threaded social) are the genuinely new model work. |
 | 6 · Cutover & decommission | 1 wk | **1 wk** | Mostly calendar — content-owner walkthrough, UAT, DNS. No data migration (demo, no users). |
-| — | | **~3.5–4 wks** | Plus the Azure tenant/consent queue, which runs in parallel and should start now. |
+| — | | **~3 wks** | Plus the Azure tenant/consent queue, which runs in parallel and should start now. |
 
 External dependency to start immediately: the **Azure app registration + tenant
 admin consent** for Entra ID (out of our control; see `rails/README.md`).

@@ -19,7 +19,7 @@
       <ul class="cards">
         <% @results.each do |item| %>
           <li class="card">
-            <span class="pill"><%= item.content_type.humanize %></span>
+            <span class="pill"><%= item.content_record_type.underscore.humanize %></span>
             <h3><%= item.title %></h3>
             <% if item.subtitle.present? %><p class="muted"><%= item.subtitle %></p><% end %>
           </li>
@@ -57,23 +57,23 @@
     <h2><%= section.tr("_", " ").titleize %></h2>
     <ul class="cards">
       <% items.each do |item| %>
-        <li class="card card--<%= item.content_type %>">
-          <span class="pill"><%= item.content_type.humanize %></span>
+        <li class="card card--<%= item.content_record_type.underscore %>">
+          <span class="pill"><%= item.content_record_type.underscore.humanize %></span>
           <% if item.image.attached? %>
             <%= image_tag url_for(item.image), class: "card-img" %>
           <% elsif item.media_asset&.file&.attached? && item.media_asset.image? %>
             <%= image_tag url_for(item.media_asset.file), class: "card-img" %>
           <% end %>
           <h3>
-            <% if item.link_url.present? %>
-              <%= link_to item.title, item.link_url %>
+            <% if item.content_record.respond_to?(:link_url) && item.content_record.link_url.present? %>
+              <%= link_to item.title, item.content_record.link_url %>
             <% else %>
               <%= item.title %>
             <% end %>
           </h3>
           <% if item.subtitle.present? %><p class="muted"><%= item.subtitle %></p><% end %>
-          <% if item.body.present? %>
-            <div class="body"><%= item.body %></div>
+          <% if item.content_record.respond_to?(:body) && item.content_record.body.present? %>
+            <div class="body"><%= item.content_record.body %></div>
           <% end %>
         </li>
       <% end %>

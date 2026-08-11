@@ -9,18 +9,26 @@ RSpec.describe ContentItemPolicy do
   let(:corp_item)    { build(:content_item, division: "corporate") }
   let(:defense_item) { build(:content_item, division: "defense") }
 
-  describe "update?" do
-    it "lets an admin edit any division" do
-      expect(subject.new(admin, defense_item).update?).to be true
-    end
-
-    it "lets a division admin edit only their own division" do
-      expect(subject.new(corp_admin, corp_item).update?).to be true
-      expect(subject.new(corp_admin, defense_item).update?).to be false
+  # The Avo resource backed by ContentItem itself is a read-only cross-type
+  # overview now — editing happens on each type's own resource, authorized by
+  # ContentRecordPolicy instead. See docs/CONTENT_MODEL_SPLIT_PLAN.md.
+  describe "index?/show?" do
+    it "lets staff (admin or division admin) view the overview" do
+      expect(subject.new(admin, defense_item).index?).to be true
+      expect(subject.new(corp_admin, corp_item).show?).to be true
     end
 
     it "denies viewers" do
-      expect(subject.new(viewer, corp_item).update?).to be false
+      expect(subject.new(viewer, corp_item).index?).to be false
+      expect(subject.new(viewer, corp_item).show?).to be false
+    end
+  end
+
+  describe "update?/create?/destroy?" do
+    it "is always false — this resource is read-only" do
+      expect(subject.new(admin, defense_item).update?).to be false
+      expect(subject.new(admin, defense_item).create?).to be false
+      expect(subject.new(admin, defense_item).destroy?).to be false
     end
   end
 
