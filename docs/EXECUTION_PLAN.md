@@ -49,7 +49,7 @@ representative content.**
 | 1 | **Rails foundation** | Rails 8 app, keep-as-is models, Entra OIDC, Avo, Pundit, ActiveStorage→Azure, RSpec + CI | ✅ Yes |
 | 2 | **Unified CMS** (the roadmap feature) | `content_items` / `content_versions` / `media_assets`; draft/schedule/publish, versioning, media library; one Avo admin; seeded content | ✅ Yes |
 | — | **DECISION GATE** | Working Rails CMS to evaluate; re-estimate the rest | ⏸ Stop & decide |
-| 3 | Server-render the division portals | Six hand-assembled React homes → one templated page driven by the content model | ❌ Post-gate |
+| 3 | Server-render the division portals | Six hand-assembled React homes → one templated page driven by the content model. Done when [visual-diff](./VISUAL_DIFF_PLAN.md) parity passes. | ❌ Post-gate |
 | 4 | Port the remaining apps | Trip reports (ActiveStorage), bulletin board (ActiveRecord), BD tools as React islands, pg_search across all content | ❌ Post-gate |
 | 5 | Cutover & decommission | Content-owner walkthrough, UAT, DNS switch, retire the Node app | ❌ Post-gate |
 
