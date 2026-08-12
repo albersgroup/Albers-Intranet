@@ -28,9 +28,13 @@ mise install
 npm install
 
 mise trust rails/.mise.toml
-(cd rails && mise install && bundle install)
+# foreman is required by bin/dev but intentionally absent from the Gemfile
+# (Rails convention: bin/dev installs it on demand). That on-demand install
+# doesn't work under mise, since binaries from `gem install` aren't on PATH
+# until `mise reshim` runs — so install and reshim it here instead.
+(cd rails && mise install && bundle install && gem install foreman && mise reshim)
 
 echo ""
 echo "Setup complete."
 echo "  Node app:  npm run dev              (http://localhost:5050)"
-echo "  Rails app: cd rails && bin/rails server  (http://localhost:3000)"
+echo "  Rails app: cd rails && bin/dev      (http://localhost:3000)"
