@@ -83,8 +83,6 @@ const ICON_COLORS = [
 ];
 
 const DEFAULT_INTERNAL_LINKS: QuickLink[] = [
-  { id: "1", link_type: "internal", title: "Proposal Dashboard", description: "Live ClickUp metrics & analytics", icon: "LayoutDashboard", url: "/proposal-dashboard", sort_order: 0, is_visible: true },
-  { id: "2", link_type: "internal", title: "Training", description: "Best practices & templates", icon: "Presentation", url: "/training", sort_order: 1, is_visible: true },
   { id: "3", link_type: "internal", title: "New Opportunity Form", description: "Submit new business opportunities", icon: "FilePlus2", url: "/new-opportunity", sort_order: 2, is_visible: true },
   { id: "4", link_type: "internal", title: "Capture Questions", description: "Strategic capture guidance", icon: "FileText", url: "/capture-questions", sort_order: 3, is_visible: true }
 ];
@@ -98,7 +96,6 @@ const DEFAULT_EXTERNAL_LINKS: QuickLink[] = [
 
 const DEFAULT_LAYOUT: LayoutSection[] = [
   { id: "1", section_key: "hero", display_name: "Hero Banner", sort_order: 0, column_span: 2, is_visible: true },
-  { id: "2", section_key: "dashboard_cta", display_name: "Proposal Dashboard CTA", sort_order: 1, column_span: 2, is_visible: true },
   { id: "3", section_key: "news", display_name: "BOU News & Updates", sort_order: 2, column_span: 1, is_visible: true },
   { id: "4", section_key: "newsletter", display_name: "BOU Newsletter", sort_order: 3, column_span: 1, is_visible: true },
   { id: "5", section_key: "bulletin", display_name: "Bulletin Board", sort_order: 4, column_span: 1, is_visible: true },
@@ -171,29 +168,6 @@ function HeroSection({ heroImage }: { heroImage: string }) {
         </div>
       </div>
     </div>
-  );
-}
-
-function DashboardCTASection() {
-  return (
-    <Link href="/proposal-dashboard">
-      <Card className="hover-elevate cursor-pointer border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-lg bg-primary/10">
-                <LayoutDashboard className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">Proposal Dashboard</h3>
-                <p className="text-sm text-muted-foreground">View live ClickUp metrics, win rates, and team workload</p>
-              </div>
-            </div>
-            <ArrowRight className="w-5 h-5 text-muted-foreground" />
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
   );
 }
 
@@ -338,7 +312,6 @@ export default function BOUHome() {
   // Section registry - maps section_key to render function
   const sectionRegistry: Record<string, () => JSX.Element> = {
     hero: () => <HeroSection heroImage={heroImage} />,
-    dashboard_cta: () => <DashboardCTASection />,
     news: () => <NewsSection />,
     newsletter: () => <NewsletterSection />,
     bulletin: () => <BulletinSection />,

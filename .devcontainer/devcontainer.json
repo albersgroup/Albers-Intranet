@@ -1,0 +1,27 @@
+{
+  "name": "Albers Intranet (Node + Rails)",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "vscode",
+
+  "forwardPorts": [5050, 3000, 5432],
+  "portsAttributes": {
+    "5050": { "label": "Node app (Intranet)", "onAutoForward": "notify" },
+    "3000": { "label": "Rails app (CMS)", "onAutoForward": "notify" },
+    "5432": { "label": "PostgreSQL", "onAutoForward": "silent" }
+  },
+
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        "Shopify.ruby-lsp"
+      ]
+    }
+  }
+}

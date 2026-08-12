@@ -1,0 +1,46 @@
+/*
+ * Chrome + auth styling (topbar, flash, sign-in card) — brand maroon #51142a.
+ *
+ * Portal pages are styled entirely by Tailwind (app/assets/builds/tailwind.css,
+ * built from application.tailwind.css). This file deliberately contains no
+ * global element rules (body, a, …): the portals reproduce the old Node app's
+ * rendering pixel-for-pixel and must not inherit stray colors or underlines.
+ * Tailwind's preflight + base layer own the body/background/font defaults.
+ */
+:root {
+  --brand: #51142a;
+  --ink: #14100f;
+  --line: #e7e2dd;
+}
+
+.container { max-width: 1100px; margin: 0 auto; padding: 24px 20px 64px; }
+
+/* top bar */
+.topbar {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--brand); color: #fff; padding: 12px 20px;
+}
+.topbar .brand { color: #fff; font-weight: 700; font-size: 18px; text-decoration: none; }
+.topbar .spacer { flex: 1; }
+.topbar-link, .topbar-user { color: #fff; font-size: 14px; text-decoration: none; }
+.topbar-link:hover { text-decoration: underline; }
+.topbar-link.linkish { background: none; border: 0; cursor: pointer; padding: 0; font: inherit; }
+.topbar-user { opacity: .85; }
+
+/* flash */
+.flash { max-width: 1100px; margin: 12px auto 0; padding: 10px 16px; border-radius: 8px; font-size: 14px; }
+.flash.notice { background: #e8f4ea; color: #1e5631; }
+.flash.alert  { background: #fdecec; color: #8a1c1c; }
+
+/* auth card */
+.auth-card { max-width: 420px; margin: 48px auto; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 32px; }
+.auth-card h1 { margin: 0 0 4px; }
+.auth-card a { color: var(--brand); text-decoration: none; }
+.auth-card a:hover { text-decoration: underline; }
+.auth-card hr { border: 0; border-top: 1px solid var(--line); margin: 20px 0; }
+.btn { display: block; width: 100%; padding: 11px 16px; border-radius: 8px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: inherit; cursor: pointer; text-align: left; }
+.btn-primary { background: var(--brand); color: #fff; border-color: var(--brand); text-align: center; font-weight: 600; }
+.btn-block { margin-bottom: 8px; }
+.dev-users { list-style: none; margin: 0; padding: 0; }
+.dev-users form { margin: 0 0 8px; }
+.dev-users .btn { display: flex; justify-content: space-between; align-items: center; }

@@ -344,10 +344,8 @@ function QuickLinksTab() {
   });
 
   const defaultLinks: QuickLink[] = [
-    { id: "1", link_type: "internal", title: "IDIQ Management Portal", description: "AI-scored task order opportunities", icon: "Target", url: "/idiq-management", sort_order: 0, is_visible: true },
     { id: "2", link_type: "internal", title: "New Opportunity Form", description: "Submit new business opportunities", icon: "FilePlus2", url: "/new-opportunity", sort_order: 1, is_visible: true },
     { id: "3", link_type: "internal", title: "Bid / No-Bid", description: "Opportunity evaluation tool", icon: "ClipboardCheck", url: "/bid-no-bid", sort_order: 2, is_visible: true },
-    { id: "4", link_type: "external", title: "Business Intelligence Tool", description: "Business intelligence reports", icon: "BarChart3", url: "/api/easy-bi-reports", sort_order: 0, is_visible: true },
   ];
 
   const handleSave = () => {

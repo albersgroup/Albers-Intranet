@@ -1,0 +1,73 @@
+<%# EditableTeamSpotlights.tsx. Defaults from the registry; published
+    TeamSpotlight items override. The edit pencil is visible at rest in the
+    frozen baseline (captured as an admin), so it renders unconditionally. %>
+<%
+  records = items.select { |i| i.content_record_type == "TeamSpotlight" }.first(3)
+  spotlights =
+    if records.any?
+      records.map do |item|
+        { spotlight_type: item.content_record.try(:spotlight_type) || "New Hire",
+          name: item.content_record.employee_name || item.title,
+          role: item.content_record.employee_role,
+          department: item.content_record.try(:department),
+          context: item.content_record.body&.to_plain_text,
+          image_url: item.image.attached? ? url_for(item.image) : nil }
+      end
+    else
+      section.locals[:spotlights].map do |s|
+        s.merge(image_url: s[:image] && image_url(s[:image]))
+      end
+    end
+  type_icons = {
+    "New Hire" => ["sparkles", "text-emerald-600"],
+    "Promotion" => ["star", "text-purple-600"],
+    "Work Anniversary" => ["calendar", "text-blue-600"],
+    "Achievement" => ["trophy", "text-amber-600"],
+  }
+%>
+<div class="shadcn-card rounded-xl border bg-card border-card-border text-card-foreground shadow-sm h-full flex flex-col">
+  <div class="flex flex-col space-y-1.5 p-6 pb-3">
+    <%# no leading-none: tailwind-merge drops it when a text-size override (text-lg) is present %>
+    <div class="font-semibold tracking-tight flex items-center justify-between gap-2 text-lg">
+      <div class="flex items-center gap-2">
+        <%= lucide_icon("trophy", css: "w-5 h-5 text-amber-500") %>
+        Team Spotlights
+      </div>
+      <a href="/avo">
+        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 border border-transparent h-8 w-8">
+          <%= lucide_icon("pencil", css: "w-4 h-4") %>
+        </button>
+      </a>
+    </div>
+  </div>
+  <div class="p-6 pt-0 space-y-3">
+    <% spotlights.each do |spotlight| %>
+      <div class="flex gap-3 p-3 rounded-lg border border-border/50">
+        <% if spotlight[:image_url] %>
+          <img src="<%= spotlight[:image_url] %>" alt="<%= spotlight[:name] %>" class="w-12 h-12 rounded-full object-cover flex-shrink-0">
+        <% else %>
+          <div class="w-12 h-12 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+            <% icon, color = type_icons.fetch(spotlight[:spotlight_type], ["user", "text-muted-foreground"]) %>
+            <%= lucide_icon(icon, css: "w-6 h-6 #{color}") %>
+          </div>
+        <% end %>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-0.5">
+            <p class="font-medium text-sm"><%= spotlight[:name] %></p>
+            <div class="whitespace-nowrap inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover-elevate border-transparent bg-primary text-primary-foreground shadow-xs text-xs">
+              <%= spotlight[:spotlight_type] %>
+            </div>
+          </div>
+          <p class="text-xs text-muted-foreground">
+            <%= spotlight[:role] %><%= " • #{spotlight[:department]}" if spotlight[:department].present? %>
+          </p>
+          <% if spotlight[:context].present? %>
+            <p class="text-xs text-muted-foreground mt-1 leading-relaxed">
+              <%= spotlight[:context] %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

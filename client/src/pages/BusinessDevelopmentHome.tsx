@@ -60,7 +60,6 @@ const ICON_COLORS = [
 ];
 
 const INTERNAL_LINKS: QuickLink[] = [
-  { id: "1", link_type: "internal", title: "IDIQ Management Portal", description: "AI-scored task order opportunities", icon: "Target", url: "/idiq-management" },
   { id: "2", link_type: "internal", title: "New Opportunity Form", description: "Submit new business opportunities", icon: "FilePlus2", url: "/new-opportunity" },
   { id: "3", link_type: "internal", title: "Bid / No-Bid", description: "Opportunity evaluation tool", icon: "ClipboardCheck", url: "/bid-no-bid" },
   { id: "4", link_type: "internal", title: "Capture Questions", description: "Strategic capture guidance", icon: "FileText", url: "/capture-questions" },
@@ -138,29 +137,6 @@ function HeroSection() {
         </div>
       </div>
     </div>
-  );
-}
-
-function IDIQCTASection() {
-  return (
-    <Link href="/idiq-management">
-      <Card className="hover-elevate cursor-pointer border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-lg bg-primary/10">
-                <Target className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">IDIQ Management Portal</h3>
-                <p className="text-sm text-muted-foreground">AI-scored task order opportunities filtered by Albers capabilities</p>
-              </div>
-            </div>
-            <ArrowRight className="w-5 h-5 text-muted-foreground" />
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
   );
 }
 
@@ -271,7 +247,6 @@ export default function BusinessDevelopmentHome() {
   return (
     <div className="p-6 pb-24 max-w-7xl mx-auto space-y-6">
       <HeroSection />
-      <IDIQCTASection />
       <div className="grid lg:grid-cols-2 gap-6">
         <NewsSection />
         <NewsletterSection />

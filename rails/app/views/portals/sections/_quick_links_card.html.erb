@@ -1,0 +1,71 @@
+<%# The link-rows card pattern shared by Corporate's "Employee Resources" /
+    "BD & Proposals" and BOU's "BOU Tools" / "External Systems". Default rows
+    come from the registry (Node hardcoded them); published QuickLink items
+    override. External rows open in a new tab with an external-link trailing
+    icon; internal rows use an arrow. %>
+<%
+  locals = section.locals
+  quick_links = items.select { |i| i.content_record_type == "QuickLink" }
+  external_card = locals[:rows].first&.external
+  rows =
+    if quick_links.any?
+      quick_links.map.with_index do |item, index|
+        Portal::LinkRow.new(
+          title: item.title,
+          description: item.subtitle,
+          icon: item.content_record.icon.presence || "external-link",
+          color: item.content_record.try(:icon_color).presence || Portal::Layout::ICON_COLORS[index % Portal::Layout::ICON_COLORS.length],
+          url: item.content_record.link_url,
+          external: external_card
+        )
+      end
+    else
+      locals[:rows]
+    end
+%>
+<div class="shadcn-card rounded-xl border bg-card border-card-border text-card-foreground shadow-sm<%= " #{locals[:card_css]}" if locals[:card_css] %>">
+  <div class="flex flex-col space-y-1.5 p-6">
+    <div class="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+      <%= lucide_icon(locals[:header_icon], css: "w-5 h-5 text-primary") %>
+      <%= locals[:title] %>
+    </div>
+    <div class="text-sm text-muted-foreground">
+      <%= locals[:description] %>
+    </div>
+  </div>
+  <div class="p-6 pt-0 space-y-3">
+    <% rows.each do |row| %>
+      <% row_card = capture do %>
+        <div class="shadcn-card rounded-xl border bg-card border-card-border text-card-foreground shadow-sm hover-elevate cursor-pointer">
+          <div class="p-3">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded-lg bg-muted <%= row.color %>">
+                <%= lucide_icon(row.icon, css: "w-4 h-4") %>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-medium text-sm"><%= row.title %></h3>
+                <p class="text-xs text-muted-foreground truncate">
+                  <%= row.description %>
+                </p>
+              </div>
+              <%= lucide_icon(row.external ? "external-link" : "arrow-right", css: "w-4 h-4 text-muted-foreground flex-shrink-0") %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <% if row.external %>
+        <a href="<%= row.url %>" target="_blank" rel="noopener noreferrer" class="block"><%= row_card %></a>
+      <% else %>
+        <a href="<%= row.url %>"><%= row_card %></a>
+      <% end %>
+    <% end %>
+    <% if locals[:footer_button] %>
+      <a href="<%= locals[:footer_button][:url] %>">
+        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 border [border-color:var(--button-outline)] shadow-xs active:shadow-none min-h-9 px-4 py-2 w-full gap-2 mt-2">
+          <%= lucide_icon(locals[:footer_button][:icon], css: "w-4 h-4") %>
+          <%= locals[:footer_button][:label] %>
+        </button>
+      </a>
+    <% end %>
+  </div>
+</div>

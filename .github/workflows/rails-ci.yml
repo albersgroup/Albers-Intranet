@@ -1,0 +1,63 @@
+name: Rails CMS CI
+
+on:
+  push:
+    paths:
+      - "rails/**"
+      - ".github/workflows/rails-ci.yml"
+  pull_request:
+    paths:
+      - "rails/**"
+      - ".github/workflows/rails-ci.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rails
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: albers
+          POSTGRES_PASSWORD: albers
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U albers"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      PGHOST: localhost
+      PGUSER: albers
+      PGPASSWORD: albers
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: rails
+
+      - name: Prepare test database (schema only, no seeds)
+        run: bin/rails db:test:prepare
+
+      # Layouts link the compiled bundle; without this Propshaft raises
+      # MissingAssetError in any spec that renders a page. (The gem's own
+      # hook is on test:prepare, which this job never invokes.)
+      - name: Build Tailwind CSS
+        run: bin/rails tailwindcss:build
+
+      - name: Run RSpec
+        run: bundle exec rspec
+
+      - name: Run RuboCop
+        run: bundle exec rubocop -f github

@@ -1,0 +1,42 @@
+<%# The portal page is a pixel-faithful transcription of the old Node app's
+    division home pages, composed from Portal::Layout (see that file). Class
+    strings are verbatim from the React source with shadcn's tailwind-merge
+    semantics pre-applied (an overriding class replaces the base class rather
+    than appearing alongside it). Resist "cleanups" — tag choices and DOM
+    nesting are part of the pixel contract with visual-diff/baselines. %>
+<% content_for :title, "#{@division.humanize} Portal — Albers Intranet" %>
+
+<% if @results %>
+  <%= render "portals/sections/search_results" %>
+<% else %>
+  <div class="p-6 pb-24 max-w-7xl mx-auto space-y-6">
+    <% hero = capture do %>
+      <%= render "portals/sections/hero", hero: @layout.hero, override: @hero_override, division: @division %>
+    <% end %>
+    <% if @layout.hero_cell_css.nil? %>
+      <%= hero %>
+    <% else %>
+      <%= tag.div hero, class: @layout.hero_cell_css.presence %>
+    <% end %>
+
+    <% @layout.rows.each do |row| %>
+      <% cells = capture do %>
+        <% row.cells.each do |cell| %>
+          <% content = render "portals/sections/#{cell.section.partial}",
+                              section: cell.section,
+                              items: cell.section.key ? (@sections[cell.section.key] || []) : [] %>
+          <% if cell.css.nil? %>
+            <%= content %>
+          <% else %>
+            <%= tag.div content, class: cell.css.presence %>
+          <% end %>
+        <% end %>
+      <% end %>
+      <% if row.css.nil? %>
+        <%= cells %>
+      <% else %>
+        <%= tag.div cells, class: row.css %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

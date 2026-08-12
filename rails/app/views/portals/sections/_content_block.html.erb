@@ -1,0 +1,66 @@
+<%# EditableContentBlock.tsx (strategic plan). Defaults come from the layout
+    registry — Node hardcodes them client-side; a published ContentBlock item
+    overrides. The admin edit pencil is opacity-0 at rest and is omitted. %>
+<%
+  block = items.find { |i| i.content_record_type == "ContentBlock" }
+  data = {
+    title: block&.title.presence || section.locals[:title],
+    subtitle: block ? block.subtitle : section.locals[:subtitle],
+    badges: block ? (block.content_record.try(:badges) || []) : section.locals[:badges],
+  }
+  image_source =
+    if block
+      block.image.attached? ? url_for(block.image) : nil
+    else
+      image_url(section.locals[:image])
+    end
+%>
+<div class="shadcn-card rounded-xl border bg-card border-card-border text-card-foreground shadow-sm overflow-hidden relative group">
+  <%# Admin edit pencil, present in the frozen baseline (captured as admin).
+      Deliberately kept although opacity-0: its `absolute` class loses the
+      specificity fight against `.hover-elevate:not(...) { position: relative }`
+      (same as in Node), so the button is IN FLOW and pushes the content down
+      36px. Removing it would break pixel parity. %>
+  <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 bg-primary text-primary-foreground border border-primary-border h-9 w-9 absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+    <%= lucide_icon("pencil", css: "w-4 h-4") %>
+  </button>
+  <div class="p-0">
+    <div class="flex flex-col md:flex-row">
+      <% if image_source %>
+        <div class="md:w-2/5 flex-shrink-0 bg-[#51142a] p-4 flex items-center justify-center cursor-pointer group/img relative">
+          <img src="<%= image_source %>" alt="<%= data[:title] %>" class="w-full h-auto max-h-[200px] object-contain rounded transition-transform group-hover/img:scale-105">
+          <div class="absolute inset-0 bg-black/0 group-hover/img:bg-black/20 transition-colors flex items-center justify-center">
+            <span class="text-white text-xs opacity-0 group-hover/img:opacity-100 transition-opacity bg-black/50 px-2 py-1 rounded">
+              Click to enlarge
+            </span>
+          </div>
+        </div>
+      <% end %>
+      <div class="flex-1 p-4 flex flex-col justify-center<%= " w-full" unless image_source %>">
+        <div class="flex items-center gap-2 mb-2">
+          <%= lucide_icon("sparkles", css: "w-5 h-5 text-primary") %>
+          <h3 class="font-semibold text-base"><%= data[:title] %></h3>
+        </div>
+        <% if data[:subtitle].present? %>
+          <p class="text-lg font-bold text-primary mb-2"><%= data[:subtitle] %></p>
+        <% end %>
+        <div class="text-muted-foreground text-xs mb-3 prose prose-sm max-w-none">
+          <% if block %>
+            <%= sanitize(block.content_record.body&.body&.to_html.to_s) %>
+          <% else %>
+            <%= section.locals[:content] %>
+          <% end %>
+        </div>
+        <% if data[:badges].present? %>
+          <div class="flex flex-wrap gap-1">
+            <% data[:badges].each do |badge| %>
+              <div class="whitespace-nowrap inline-flex items-center rounded-md px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover-elevate border [border-color:var(--badge-outline)] shadow-xs bg-primary/5 text-xs">
+                <%= badge %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

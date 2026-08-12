@@ -70,13 +70,6 @@ const bdTools = [
     color: "text-blue-600"
   },
   {
-    title: "Proposal Training",
-    description: "Best practices for proposal writing",
-    icon: Presentation,
-    href: "/proposal-training",
-    color: "text-emerald-600"
-  },
-  {
     title: "Bid / No-Bid",
     description: "Opportunity evaluation framework",
     icon: ClipboardCheck,

@@ -1,3 +1,4 @@
+import { sanitizeHtml } from "@/lib/sanitize";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -155,7 +156,7 @@ export default function NewsArchivePage() {
                           </div>
                           <div 
                             className="text-xs text-muted-foreground bulletin-content"
-                            dangerouslySetInnerHTML={{ __html: article.content }}
+                            dangerouslySetInnerHTML={sanitizeHtml(article.content)}
                           />
                         </CardContent>
                       </Card>
@@ -195,7 +196,7 @@ export default function NewsArchivePage() {
             <div className="mt-4 space-y-4">
               <div 
                 className="bulletin-content max-w-none text-foreground"
-                dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+                dangerouslySetInnerHTML={sanitizeHtml(selectedArticle.content)}
               />
               {selectedArticle.attachmentUrl && (
                 <div className="pt-4 border-t">

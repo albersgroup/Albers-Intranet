@@ -1,0 +1,35 @@
+<%# Portal pages reproduce the old Node app pixel-for-pixel. The Node app
+    shipped <html class="dark"> (a blue-grey light theme, despite the name) —
+    the class selects the token set the visual-diff baselines were rendered
+    with. <main> is bare and full-bleed: the page root inside carries Node's
+    own max-w-7xl centering, and the corporate baseline is edge-to-edge. %>
+<!DOCTYPE html>
+<html class="dark">
+  <head>
+    <title><%= content_for(:title) || "Albers Intranet" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="application-name" content="Albers Intranet">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag "tailwind", "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <%= render "shared/topbar" %>
+
+    <% if flash[:notice] %><div class="flash notice"><%= flash[:notice] %></div><% end %>
+    <% if flash[:alert] %><div class="flash alert"><%= flash[:alert] %></div><% end %>
+
+    <main>
+      <%= yield %>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<%# Rails-only server-side search results (?q=…). Not part of the Node app
+    or the visual-diff baselines — styled lightly with the shared tokens. %>
+<div class="p-6 pb-24 max-w-7xl mx-auto space-y-6">
+  <div class="shadcn-card rounded-xl border bg-card border-card-border text-card-foreground shadow-sm">
+    <div class="flex flex-col space-y-1.5 p-6">
+      <div class="text-2xl font-semibold leading-none tracking-tight">
+        Search results for “<%= params[:q] %>”
+      </div>
+      <div class="text-sm text-muted-foreground">
+        <%= link_to "← Back to the #{@division.humanize} portal", portal_path(division: @division), class: "hover:underline" %>
+      </div>
+    </div>
+    <div class="p-6 pt-0">
+      <% if @results.any? %>
+        <div class="space-y-4">
+          <% @results.each do |item| %>
+            <article class="p-4 border rounded-lg">
+              <div class="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+                <%= item.content_record_type.underscore.humanize %>
+              </div>
+              <h3 class="font-semibold text-sm"><%= item.title %></h3>
+              <% if item.subtitle.present? %>
+                <p class="text-sm text-muted-foreground mt-1"><%= item.subtitle %></p>
+              <% end %>
+            </article>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-muted-foreground">No matches.</p>
+      <% end %>
+    </div>
+  </div>
+</div>
