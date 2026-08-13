@@ -7,10 +7,6 @@
 
   <%= button_to "Sign in with Microsoft (Entra ID)", "/auth/entra_id",
         method: :post, class: "btn btn-primary btn-block", data: { turbo: false } %>
-  <p class="muted small">
-    Entra ID SSO activates once the Azure app registration and tenant admin
-    consent are in place. Until then, use a dev login below.
-  </p>
 
   <% if @dev_users.present? %>
     <hr>
