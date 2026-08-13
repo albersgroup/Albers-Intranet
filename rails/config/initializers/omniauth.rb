@@ -13,7 +13,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
              name: :entra_id,
              scope: [ :openid, :email, :profile ],
              response_type: :code,
-             issuer: "https://login.microsoftonline.com/#{tenant}/v2.0",
+             issuer: "https://login.microsoftonline.us/#{tenant}/v2.0",
              discovery: true,
              uid_field: "sub",
              client_options: {
