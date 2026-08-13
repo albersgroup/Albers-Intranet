@@ -51,8 +51,8 @@ gem "pg_search"
 # Entra ID (Azure AD) SSO via OpenID Connect
 gem "omniauth_openid_connect"
 gem "omniauth-rails_csrf_protection"
-# Azure Blob storage service for Active Storage (production)
-gem "azure-storage-blob", require: false
+# Amazon S3 storage service for Active Storage (production)
+gem "aws-sdk-s3", require: false
 
 # Tailwind via the standalone binary (no Node in rails/). Pinned to the v3.4
 # binary line: portal ERB copies the Node app's Tailwind v3 class strings

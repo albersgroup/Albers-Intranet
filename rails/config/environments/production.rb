@@ -22,9 +22,9 @@ Rails.application.configure do
   # config.asset_host = "http://assets.example.com"
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  # Media lives in Azure Blob Storage in production (avoids persistent disk).
-  # Falls back to :local if Azure env vars are not configured.
-  config.active_storage.service = ENV["AZURE_STORAGE_ACCOUNT"].present? ? :azure : :local
+  # Media lives in S3 in production (avoids persistent disk).
+  # Falls back to :local if S3 env vars are not configured.
+  config.active_storage.service = ENV["AWS_S3_BUCKET"].present? ? :amazon : :local
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true

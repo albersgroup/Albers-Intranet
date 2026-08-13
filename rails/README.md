@@ -77,10 +77,17 @@ registered and dev login is used:
 
 ## Media storage
 
-`ActiveStorage` uses local disk in development and **Azure Blob Storage** in
-production (no persistent disk required). Configure with `AZURE_STORAGE_ACCOUNT`,
-`AZURE_STORAGE_ACCESS_KEY`, and `AZURE_STORAGE_CONTAINER`; production falls back
-to local disk if these are unset.
+`ActiveStorage` uses local disk in development and **Amazon S3** in production
+(no persistent disk required — important on Heroku, where the filesystem is
+ephemeral). Configure with the env vars below; production falls back to local
+disk if `AWS_S3_BUCKET` is unset.
+
+| Variable | Purpose |
+| --- | --- |
+| `AWS_S3_BUCKET` | S3 bucket name (also the switch that enables S3) |
+| `AWS_ACCESS_KEY_ID` | IAM access key |
+| `AWS_SECRET_ACCESS_KEY` | IAM secret key |
+| `AWS_REGION` | Bucket region (defaults to `us-east-1`) |
 
 ## Tests
 
