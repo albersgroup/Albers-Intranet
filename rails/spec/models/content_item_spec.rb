@@ -9,6 +9,16 @@ RSpec.describe ContentItem do
       expect(build(:content_item, division: nil)).to be_valid # org-wide
     end
 
+    # The admin UI's "Org-wide (all portals)" choice is a blank <option>, which
+    # posts "" rather than nil. Untreated, `allow_nil: true` rejects it and
+    # for_division/acts_as_list end up scoping on two different "no division"
+    # representations.
+    it "treats a blank division as org-wide (nil)" do
+      item = build(:content_item, division: "")
+      expect(item).to be_valid
+      expect(item.division).to be_nil
+    end
+
     it "requires publish_at when scheduled" do
       item = build(:content_item, status: "scheduled", publish_at: nil)
       expect(item).not_to be_valid

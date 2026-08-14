@@ -15,14 +15,15 @@ class Avo::Resources::ContentItem < Avo::BaseResource
     field :subtitle, as: :text, readonly: true
     field :content_record_type, as: :text, readonly: true, name: "Type"
 
+    # index_by, not index_with — see ContentEnvelopeFields for why.
     field :division, as: :select,
-      options: ContentItem::DIVISIONS.index_with(&:humanize),
+      options: ContentItem::DIVISIONS.index_by(&:humanize),
       readonly: true
     field :section, as: :text, readonly: true
     field :position, as: :number, readonly: true
 
     field :status, as: :select,
-      options: ContentItem::STATUSES.index_with(&:humanize),
+      options: ContentItem::STATUSES.index_by(&:humanize),
       readonly: true
     field :publish_at, as: :date_time, readonly: true
 

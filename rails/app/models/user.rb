@@ -19,6 +19,10 @@ class User < ApplicationRecord
   validates :division, inclusion: { in: DIVISIONS }, allow_nil: true
 
   normalizes :email, with: ->(e) { e.strip.downcase }
+  # The admin UI's "Org-wide" choice is a blank <option>, which posts "" rather
+  # than nil. Without this, `inclusion ... allow_nil: true` rejects it and
+  # org-wide users can't be saved at all.
+  normalizes :division, with: ->(d) { d.presence }
 
   def admin?           = role == "admin"
   def division_admin?  = role == "division_admin"
