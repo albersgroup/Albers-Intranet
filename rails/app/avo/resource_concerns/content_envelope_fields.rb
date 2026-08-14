@@ -13,15 +13,17 @@ module Avo::ResourceConcerns::ContentEnvelopeFields
   def content_envelope_fields
     field :title, as: :text, required: true
     field :subtitle, as: :text
+    # index_by, not index_with: a select *field*'s options hash is
+    # {label => stored_value}, the inverse of a SelectFilter's options.
     field :division, as: :select,
-      options: ContentItem::DIVISIONS.index_with(&:humanize),
+      options: ContentItem::DIVISIONS.index_by(&:humanize),
       include_blank: "Org-wide (all portals)"
     field :section, as: :text, required: true,
       help: "Placement bucket on the portal, e.g. hero, news, quick_links, spotlights"
     field :position, as: :number
 
     field :status, as: :select,
-      options: ContentItem::STATUSES.index_with(&:humanize),
+      options: ContentItem::STATUSES.index_by(&:humanize),
       required: true
     field :publish_at, as: :date_time,
       help: "Required when status is Scheduled; the publish job flips it live at this time."

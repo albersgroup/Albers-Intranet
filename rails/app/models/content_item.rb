@@ -38,6 +38,11 @@ class ContentItem < ApplicationRecord
   validates :division, inclusion: { in: DIVISIONS }, allow_nil: true
   validate  :publish_at_present_when_scheduled
 
+  # The admin UI's "Org-wide (all portals)" choice is a blank <option>, which
+  # posts "" rather than nil. Normalizing keeps org-wide content valid and
+  # keeps `for_division`/acts_as_list scoping on a single nil representation.
+  normalizes :division, with: ->(d) { d.presence }
+
   # -- Search ------------------------------------------------------------
   # Scoped to the shared title/subtitle fields only. pg_search's
   # associated_against needs a real, single-target association to join on;
