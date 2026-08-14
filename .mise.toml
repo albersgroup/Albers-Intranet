@@ -1,2 +1,12 @@
 [tools]
 node = "24"
+
+[tasks.deploy-rails]
+description = "Push the rails/ subtree to the Heroku production remote"
+run = """
+set -e
+git branch -D heroku-deploy-tmp 2>/dev/null || true
+git subtree split --prefix=rails -b heroku-deploy-tmp
+git push production heroku-deploy-tmp:main --force
+git branch -D heroku-deploy-tmp
+"""
